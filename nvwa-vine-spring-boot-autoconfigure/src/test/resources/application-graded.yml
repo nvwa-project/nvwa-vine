@@ -1,0 +1,9 @@
+nvwa:
+  vine:
+    clients:
+      basic:
+        deepseek:
+          - base-url: ${OPENAI_BASE_URL}
+            api-key: ${OPENAI_API_KEY}
+            options:
+              model: ${OPENAI_CHAT_MODEL}

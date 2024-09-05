@@ -1,5 +1,6 @@
 package work.nvwa.vine.springai.service;
 
+import work.nvwa.vine.annotation.ChatAction;
 import work.nvwa.vine.annotation.ChatActionService;
 import work.nvwa.vine.annotation.ChatSchemaField;
 
@@ -8,6 +9,9 @@ import java.util.List;
 @ChatActionService
 public interface SqlAnalyzeService {
 
+    @ChatAction(
+            examples = SqlAnalyzeExample.class
+    )
     QuerySqlMetadata analyzeSql(String sql);
 
     enum SortOrder {

@@ -13,7 +13,12 @@ public class VinePromptProperties {
     private String defaultValue = DEFAULT_DEFAULT_VALUE;
     private String nullable = DEFAULT_NULLABLE;
     private String inputParametersTitle = DEFAULT_INPUT_PARAMETERS_TITLE;
+    private String exampleTitle = DEFAULT_EXAMPLE_TITLE;
+    private String exampleParametersTitle = DEFAULT_EXAMPLE_PARAMETERS_TITLE;
+    private String exampleReturnTitle = DEFAULT_EXAMPLE_RETURN_TITLE;
     private String returnSchemaTitle = DEFAULT_RETURN_SCHEMA_TITLE;
+    private String returnJsonFormat = DEFAULT_RETURN_JSON_FORMAT;
+    private String returnYamlFormat = DEFAULT_RETURN_YAML_FORMAT;
 
     public String getNewLine() {
         return newLine;
@@ -71,11 +76,51 @@ public class VinePromptProperties {
         this.inputParametersTitle = inputParametersTitle;
     }
 
+    public String getExampleTitle() {
+        return exampleTitle;
+    }
+
+    public void setExampleTitle(String exampleTitle) {
+        this.exampleTitle = exampleTitle;
+    }
+
+    public String getExampleParametersTitle() {
+        return exampleParametersTitle;
+    }
+
+    public void setExampleParametersTitle(String exampleParametersTitle) {
+        this.exampleParametersTitle = exampleParametersTitle;
+    }
+
+    public String getExampleReturnTitle() {
+        return exampleReturnTitle;
+    }
+
+    public void setExampleReturnTitle(String exampleReturnTitle) {
+        this.exampleReturnTitle = exampleReturnTitle;
+    }
+
     public String getReturnSchemaTitle() {
         return returnSchemaTitle;
     }
 
     public void setReturnSchemaTitle(String returnSchemaTitle) {
         this.returnSchemaTitle = returnSchemaTitle;
+    }
+
+    public String getReturnJsonFormat() {
+        return returnJsonFormat;
+    }
+
+    public void setReturnJsonFormat(String returnJsonFormat) {
+        this.returnJsonFormat = returnJsonFormat;
+    }
+
+    public String getReturnYamlFormat() {
+        return returnYamlFormat;
+    }
+
+    public void setReturnYamlFormat(String returnYamlFormat) {
+        this.returnYamlFormat = returnYamlFormat;
     }
 }

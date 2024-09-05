@@ -40,9 +40,8 @@ public class FieldSchemaMetadata {
         if (nullable) {
             schema.append(", nullable");
         }
-        schema.append(". ");
         if (!description.isEmpty()) {
-            schema.append(description).append(". ");
+            schema.append(", ").append(description).append(". ");
         }
         if (!defaultValue.isEmpty()) {
             schema.append("default value is ").append(defaultValue);

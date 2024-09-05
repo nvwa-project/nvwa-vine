@@ -94,7 +94,12 @@ public class VineConfiguration {
                 vinePromptProperties.getDefaultValue(),
                 vinePromptProperties.getNullable(),
                 vinePromptProperties.getInputParametersTitle(),
-                vinePromptProperties.getReturnSchemaTitle()
+                vinePromptProperties.getExampleTitle(),
+                vinePromptProperties.getExampleParametersTitle(),
+                vinePromptProperties.getExampleReturnTitle(),
+                vinePromptProperties.getReturnSchemaTitle(),
+                vinePromptProperties.getReturnJsonFormat(),
+                vinePromptProperties.getReturnYamlFormat()
         );
         VinePrompter vinePrompter = new VinePrompter(vinePromptConfig);
         return new SchemaContext(vinePrompter);

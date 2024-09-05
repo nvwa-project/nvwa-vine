@@ -83,16 +83,18 @@ public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
     private BeanDefinitionHolder registerBeanDefinition(BeanDefinition candidate) {
         String className = candidate.getBeanClassName();
         String beanName = beanNameGenerator.generateBeanName(candidate, this.registry);
-        try {
-            Class<?> repositoryInterface = Class.forName(className);
-            ChatActionServiceFactoryBean<?> factoryBean = new ChatActionServiceFactoryBean<>(repositoryInterface);
-            RootBeanDefinition beanDefinition = new RootBeanDefinition(repositoryInterface);
-            beanDefinition.setInstanceSupplier(() -> factoryBean);
-            BeanDefinitionHolder definitionHolder = new BeanComponentDefinition(beanDefinition, beanName);
-            registerBeanDefinition(definitionHolder, this.registry);
-            return definitionHolder;
-        } catch (ClassNotFoundException e) {
-            logger.error("Failed to register bean definition for " + className, e);
+        if (!this.registry.containsBeanDefinition(beanName)) {
+            try {
+                Class<?> repositoryInterface = Class.forName(className);
+                ChatActionServiceFactoryBean<?> factoryBean = new ChatActionServiceFactoryBean<>(repositoryInterface);
+                RootBeanDefinition beanDefinition = new RootBeanDefinition(repositoryInterface);
+                beanDefinition.setInstanceSupplier(() -> factoryBean);
+                BeanDefinitionHolder definitionHolder = new BeanComponentDefinition(beanDefinition, beanName);
+                registerBeanDefinition(definitionHolder, this.registry);
+                return definitionHolder;
+            } catch (ClassNotFoundException e) {
+                logger.error("Failed to register bean definition for " + className, e);
+            }
         }
         return null;
     }

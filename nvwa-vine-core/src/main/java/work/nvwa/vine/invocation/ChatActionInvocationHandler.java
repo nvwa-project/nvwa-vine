@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.StringUtils;
+import work.nvwa.vine.SerializationType;
 import work.nvwa.vine.annotation.ChatAction;
 import work.nvwa.vine.annotation.ChatActionService;
 import work.nvwa.vine.chat.ChatMessage;
@@ -55,8 +55,8 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
         if (!metadata.getSystemPrompt().isBlank()) {
             messages.add(ChatMessage.systemMessage(metadata.getSystemPrompt()));
         }
-        messages.add(ChatMessage.userMessage(metadata.getUserPrompt(argumentMap)));
-        return getChatClient().call(messages, metadata.getReturnTypeRef(), metadata.getClientLevel());
+        messages.add(ChatMessage.userMessage(schemaContext.buildUserMessage(metadata, argumentMap)));
+        return getChatClient().call(messages, metadata);
     }
 
     private ChatActionMetadata buildChatActionMetadata(ChatActionService chatActionService, Method method) {
@@ -65,22 +65,20 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
         String clientLevel = chatActionService.clientLevel();
         ChatAction chatAction = method.getAnnotation(ChatAction.class);
         String task = null;
+        SerializationType serializationType;
         if (chatAction != null) {
             task = chatAction.task();
             clientLevel = chatAction.clientLevel();
+            serializationType = chatAction.serializationType();
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, serializationType, chatAction.examples());
+        } else {
+            serializationType = SerializationType.Yaml;
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, serializationType, null);
         }
         if (task == null || task.isEmpty()) {
             task = method.getName();
         }
-        if (method.getGenericReturnType() != Void.TYPE) {
-            String schema = getSchemaContext().buildSchemaPrompt(method.getGenericReturnType());
-            if (StringUtils.hasLength(schema)) {
-                if (!systemPrompt.isEmpty()) {
-                    systemPrompt += "\n\n";
-                }
-                systemPrompt += "## Return schema\n" + schema;
-            }
-        }
+
 
         if (userPrompt.isEmpty()) {
             userPrompt = task;
@@ -95,7 +93,7 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
             }
         };
 
-        return new ChatActionMetadata(userPrompt, systemPrompt, clientLevel, returnTypeRef);
+        return new ChatActionMetadata(userPrompt, systemPrompt, clientLevel, serializationType, returnTypeRef);
     }
 
     private VineChatClient getChatClient() {

@@ -41,6 +41,11 @@ public final class JsonUtils {
         return OBJECT_MAPPER.readValue(withoutEnclosure(json), valueTypeRef);
     }
 
+    public static String toJson(Object obj) throws JsonProcessingException {
+        return OBJECT_MAPPER.writeValueAsString(obj);
+    }
+
+
     private static String withoutEnclosure(String json) {
         if (json == null) {
             return null;

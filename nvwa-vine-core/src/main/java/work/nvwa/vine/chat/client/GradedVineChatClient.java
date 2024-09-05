@@ -1,7 +1,7 @@
 package work.nvwa.vine.chat.client;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import work.nvwa.vine.chat.ChatMessage;
+import work.nvwa.vine.metadata.ChatActionMetadata;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +20,8 @@ public class GradedVineChatClient implements VineChatClient {
     }
 
     @Override
-    public <T> T call(List<ChatMessage> messages, TypeReference<T> responseType, String chatModelLevel) {
-        SingletonVineChatClient chatClient = gradedClientMap.get(chatModelLevel).next();
-        return chatClient.call(messages, responseType, chatModelLevel);
+    public <T> T call(List<ChatMessage> messages, ChatActionMetadata chatActionMetadata) {
+        SingletonVineChatClient chatClient = gradedClientMap.get(chatActionMetadata.getClientLevel()).next();
+        return chatClient.call(messages, chatActionMetadata);
     }
 }

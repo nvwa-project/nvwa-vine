@@ -8,6 +8,12 @@
     <artifactId>nvwa-vine</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <url>https://github.com/nvwa-project/nvwa-vine</url>
+
+    <name>Nvwa Vine</name>
+    <description>Vine makes accessing AI simpler and more efficient</description>
+
     <modules>
         <module>nvwa-vine-core</module>
         <module>nvwa-vine-spring-boot-autoconfigure</module>
@@ -20,17 +26,6 @@
         <module>spring-boot-starters/vine-starter-zhipuai</module>
         <module>nvwa-vine-bom</module>
     </modules>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-
-        <spring-boot.version>3.3.1</spring-boot.version>
-        <spring-ai.version>1.0.0.M2</spring-ai.version>
-    </properties>
 
     <repositories>
         <repository>
@@ -50,6 +45,87 @@
             </releases>
         </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <distributionManagement>
+                <repository>
+                    <id>bitbean-fastball-mvn</id>
+                    <name>mvn</name>
+                    <url>https://bitbean-maven.pkg.coding.net/repository/fastball/mvn/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>fx</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>fx</id>
+                    <url>http://82.157.239.41:7777/repository/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>fx</id>
+                    <url>http://82.157.239.41:7777/repository/releases/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <organization>
+        <name>FanShu Inc.</name>
+        <url>https://nvwa.work</url>
+    </organization>
+    <scm>
+        <url>https://github.com/nvwa-project/nvwa-vine</url>
+        <connection>git://github.com/nvwa-project/nvwa-vine.git</connection>
+        <developerConnection>git@github.com:nvwa-project/nvwa-vine.git</developerConnection>
+    </scm>
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/nvwa-project/nvwa-vine/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>gr</id>
+            <name>GengRong</name>
+            <email>gr@fastball.dev</email>
+            <roles>
+                <role>lead</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <spring-boot.version>3.3.1</spring-boot.version>
+        <spring-ai.version>1.0.0.M2</spring-ai.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>

@@ -5,10 +5,10 @@ import java.util.List;
 
 public class TypeSchemaMetadata {
     private final String name;
-    private final String basicInfo;
-    private final String subFieldsInfo;
-    private final String fullSchemaInfo;
-    private final List<FieldSchemaMetadata> subFields;
+    private String basicInfo;
+    private String subFieldsInfo;
+    private String fullSchemaInfo;
+    private List<FieldSchemaMetadata> subFields;
 
     public TypeSchemaMetadata(String name) {
         this(name, "", "", "", new ArrayList<>());
@@ -16,6 +16,13 @@ public class TypeSchemaMetadata {
 
     public TypeSchemaMetadata(String name, String basicInfo, String subFieldsInfo, String fullSchemaInfo, List<FieldSchemaMetadata> subFields) {
         this.name = name;
+        this.basicInfo = basicInfo;
+        this.subFieldsInfo = subFieldsInfo;
+        this.fullSchemaInfo = fullSchemaInfo;
+        this.subFields = subFields;
+    }
+
+    public void fillingInfo(String basicInfo, String subFieldsInfo, String fullSchemaInfo, List<FieldSchemaMetadata> subFields) {
         this.basicInfo = basicInfo;
         this.subFieldsInfo = subFieldsInfo;
         this.fullSchemaInfo = fullSchemaInfo;

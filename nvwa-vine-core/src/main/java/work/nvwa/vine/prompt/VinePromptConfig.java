@@ -8,6 +8,11 @@ public record VinePromptConfig(
         String defaultValue,
         String nullable,
         String inputParametersTitle,
-        String returnSchemaTitle
+        String exampleTitle,
+        String exampleParametersTitle,
+        String exampleReturnTitle,
+        String returnSchemaTitle,
+        String returnJsonFormat,
+        String returnYamlFormat
 ) {
 }

@@ -44,7 +44,27 @@ public final class VinePrompter {
         return config.inputParametersTitle();
     }
 
+    public String exampleTitle() {
+        return config.exampleTitle();
+    }
+
+    public String exampleParametersTitle() {
+        return config.exampleParametersTitle();
+    }
+
+    public String exampleReturnTitle() {
+        return config.exampleReturnTitle();
+    }
+
     public String returnSchemaTitle() {
         return config.returnSchemaTitle();
+    }
+
+    public String returnJsonFormat() {
+        return config.returnJsonFormat();
+    }
+
+    public String returnYamlFormat() {
+        return config.returnYamlFormat();
     }
 }

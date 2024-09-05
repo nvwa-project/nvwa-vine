@@ -31,7 +31,12 @@ public class SingletonConfiguration {
                 DEFAULT_DEFAULT_VALUE,
                 DEFAULT_NULLABLE,
                 DEFAULT_INPUT_PARAMETERS_TITLE,
-                DEFAULT_RETURN_SCHEMA_TITLE
+                DEFAULT_EXAMPLE_TITLE,
+                DEFAULT_EXAMPLE_PARAMETERS_TITLE,
+                DEFAULT_EXAMPLE_RETURN_TITLE,
+                DEFAULT_RETURN_SCHEMA_TITLE,
+                DEFAULT_RETURN_JSON_FORMAT,
+                DEFAULT_RETURN_YAML_FORMAT
         );
         VinePrompter vinePrompter = new VinePrompter(vinePromptConfig);
         return new SchemaContext(vinePrompter);
@@ -40,7 +45,7 @@ public class SingletonConfiguration {
     @Bean
     public VineChatClient vineChatClient() {
         OpenAiApi openAiApi = new OpenAiApi(System.getenv("OPENAI_BASE_URL"), System.getenv("OPENAI_API_KEY"));
-        ChatModel chatModel = new OpenAiChatModel(openAiApi, OpenAiChatOptions.builder().withModel("OPENAI_CHAT_MODEL").build());
+        ChatModel chatModel = new OpenAiChatModel(openAiApi, OpenAiChatOptions.builder().withModel(System.getenv("OPENAI_API_KEY")).build());
         return new SingletonVineChatClient(chatModel);
     }
 

@@ -18,6 +18,7 @@ import work.nvwa.vine.autoconfigure.providers.zhipu.ZhiPuChatClientProvider;
 import work.nvwa.vine.chat.client.GradedVineChatClient;
 import work.nvwa.vine.chat.client.SingletonVineChatClient;
 import work.nvwa.vine.chat.client.VineChatClient;
+import work.nvwa.vine.config.EnableVine;
 import work.nvwa.vine.context.SchemaContext;
 import work.nvwa.vine.prompt.VinePromptConfig;
 import work.nvwa.vine.prompt.VinePrompter;
@@ -25,6 +26,7 @@ import work.nvwa.vine.prompt.VinePrompter;
 import java.util.List;
 import java.util.Map;
 
+@EnableVine
 @Configuration
 @EnableConfigurationProperties(VineProperties.class)
 public class VineConfiguration {

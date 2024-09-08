@@ -6,7 +6,7 @@
     <parent>
         <groupId>work.nvwa</groupId>
         <artifactId>nvwa-vine</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>nvwa-vine-spring-boot-autoconfigure</artifactId>

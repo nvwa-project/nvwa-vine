@@ -1,14 +1,17 @@
 package work.nvwa.vine.context;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import work.nvwa.vine.SerializationType;
+import work.nvwa.vine.annotation.ChatSchemaField;
 import work.nvwa.vine.annotation.ChatSchemaType;
 import work.nvwa.vine.example.ChatActionExample;
 import work.nvwa.vine.example.ExampleCase;
 import work.nvwa.vine.metadata.ChatActionMetadata;
 import work.nvwa.vine.metadata.FieldSchemaMetadata;
 import work.nvwa.vine.metadata.TypeSchemaMetadata;
+import work.nvwa.vine.prompt.CustomizedPrompt;
 import work.nvwa.vine.prompt.VinePrompter;
 import work.nvwa.vine.util.JsonUtils;
 import work.nvwa.vine.util.YamlUtils;
@@ -20,10 +23,14 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -37,9 +44,29 @@ public class SchemaContext {
 
     public String buildSchemaPrompt(Type type) {
         TypeSchemaMetadata rootSchema = getSchemaMetadata(type);
-        StringBuilder schema = new StringBuilder(rootSchema.getSubFieldsInfo()).append("\n\n");
-        schemaMap.keySet().stream().filter(it -> it != type).forEach(it -> schema.append(schemaMap.get(it).getFullSchemaInfo()).append("\n\n"));
+        StringBuilder schema = new StringBuilder(rootSchema.getName()).append(vinePrompter.newLine(2));
+        Set<Type> subTypes = new HashSet<>();
+        fillSubTypes(rootSchema, subTypes);
+        subTypes.stream().map(schemaMap::get).filter(Objects::nonNull).forEach(it -> schema.append(it.getFullSchemaInfo()).append(vinePrompter.newLine(2)));
         return schema.toString();
+    }
+
+    private void fillSubTypes(TypeSchemaMetadata typeMetadata, Set<Type> totalSubTypes) {
+        if (typeMetadata == null) {
+            return;
+        }
+        List<Type> subTypes = typeMetadata.getTypes().stream().filter(it -> !totalSubTypes.contains(it)).toList();
+        if (!CollectionUtils.isEmpty(subTypes)) {
+            subTypes.forEach(type -> {
+                if (schemaMap.containsKey(type)) {
+                    totalSubTypes.add(type);
+                    fillSubTypes(schemaMap.get(type), totalSubTypes);
+                }
+            });
+        }
+        if (!CollectionUtils.isEmpty(typeMetadata.getSubFields())) {
+            typeMetadata.getSubFields().forEach(field -> fillSubTypes(field.getTypeSchemaMetadata(), totalSubTypes));
+        }
     }
 
     private TypeSchemaMetadata getSchemaMetadata(Type type) {
@@ -49,12 +76,12 @@ public class SchemaContext {
         String schemaType = switch (type.getTypeName()) {
             case "java.lang.String" -> "String";
             case "byte", "java.lang.Byte", "short", "java.lang.Short", "int", "java.lang.Integer", "long", "java.lang.Long" -> "Int";
-            case "float", "java.lang.Float", "double", "java.lang.Double", "java.math.BigDecimal" -> "Number";
+            case "java.lang.Number", "float", "java.lang.Float", "double", "java.lang.Double", "java.math.BigDecimal" -> "Number";
             case "boolean", "java.lang.Boolean" -> "Boolean";
             default -> null;
         };
         if (schemaType != null) {
-            return new TypeSchemaMetadata(schemaType);
+            return new TypeSchemaMetadata(schemaType, type);
         }
         if (type instanceof ParameterizedType parameterizedType) {
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -62,13 +89,16 @@ public class SchemaContext {
                 if (Collection.class.isAssignableFrom(rowType)) {
                     if (actualTypeArguments.length > 0) {
                         TypeSchemaMetadata itemType = getSchemaMetadata(actualTypeArguments[0]);
-                        return new TypeSchemaMetadata(itemType.getName() + " Array");
+                        return new TypeSchemaMetadata(itemType.getName() + " Array", itemType.getTypes());
                     }
                 } else if (Map.class.isAssignableFrom(rowType)) {
                     if (actualTypeArguments.length > 1) {
                         TypeSchemaMetadata keyType = getSchemaMetadata(actualTypeArguments[0]);
                         TypeSchemaMetadata valueType = getSchemaMetadata(actualTypeArguments[1]);
-                        return new TypeSchemaMetadata("Map<" + keyType.getName() + ", " + valueType.getName() + ">");
+                        List<Type> typeList = new ArrayList<>();
+                        typeList.addAll(keyType.getTypes());
+                        typeList.addAll(valueType.getTypes());
+                        return new TypeSchemaMetadata("Map<" + keyType.getName() + ", " + valueType.getName() + ">", typeList);
                     }
                 } else {
                     // TODO: other parameterized types
@@ -78,10 +108,10 @@ public class SchemaContext {
         } else if (type instanceof Class<?> clazz) {
             if (clazz.isEnum()) {
                 String enumValues = Arrays.stream(clazz.getEnumConstants()).map(Object::toString).collect(Collectors.joining(", "));
-                return new TypeSchemaMetadata("Enum, such as " + enumValues);
+                return new TypeSchemaMetadata("Enum, optional options include " + enumValues, type);
             } else if (clazz.isArray()) {
                 TypeSchemaMetadata itemType = getSchemaMetadata(clazz.getComponentType());
-                return new TypeSchemaMetadata(itemType.getName() + " Array");
+                return new TypeSchemaMetadata(itemType.getName() + " Array", itemType.getTypes());
             } else {
                 return getSchemaMetadataByClass(clazz);
             }
@@ -89,8 +119,13 @@ public class SchemaContext {
         throw new IllegalArgumentException("Unsupported type: " + type.getTypeName());
     }
 
-    public String buildSystemPrompt(Method method, String systemPromptPrefix, SerializationType serializationType, Class<? extends ChatActionExample>[] exampleClasses) {
-        StringBuilder systemPrompt = new StringBuilder();
+    public String buildSystemPrompt(Method method, String systemPromptPrefix, String actionMission, SerializationType serializationType, Class<? extends ChatActionExample>[] exampleClasses) {
+        StringBuilder systemPrompt = new StringBuilder(systemPromptPrefix);
+        if (!systemPromptPrefix.isEmpty()) {
+            systemPrompt.append(systemPromptPrefix).append(vinePrompter.newLine(2));
+        }
+        systemPrompt.append(vinePrompter.header(2)).append(vinePrompter.missionTitle()).append(vinePrompter.newLine())
+                .append(actionMission).append(vinePrompter.newLine(2));
         if (method.getGenericReturnType() == Void.TYPE) {
             throw new IllegalArgumentException("The chat action method " + method.getDeclaringClass().getCanonicalName() + "." + method.getName() + " cannot return void");
         }
@@ -104,7 +139,7 @@ public class SchemaContext {
             systemPrompt.append(schema);
         }
         if (exampleClasses != null && exampleClasses.length > 0) {
-            StringBuilder examplePrompt = new StringBuilder();
+            StringBuilder examplePrompt = new StringBuilder(vinePrompter.newLine(2));
             List<String> parameterNames = Arrays.stream(method.getParameters()).map(Parameter::getName).toList();
             for (int i = 0; i < exampleClasses.length; i++) {
                 Class<? extends ChatActionExample> exampleClass = exampleClasses[i];
@@ -136,9 +171,6 @@ public class SchemaContext {
                 }
             }
             if (!examplePrompt.isEmpty()) {
-                if (!systemPromptPrefix.isEmpty()) {
-                    systemPrompt.append(vinePrompter.newLine(2));
-                }
                 systemPrompt.append(examplePrompt);
             }
         }
@@ -181,8 +213,11 @@ public class SchemaContext {
         if (obj.getClass().isPrimitive()) {
             return obj.toString();
         }
-        if(obj instanceof String) {
+        if (obj instanceof String) {
             return (String) obj;
+        }
+        if (obj instanceof CustomizedPrompt) {
+            return ((CustomizedPrompt) obj).getObjectPrompt();
         }
         try {
             return switch (serializationType) {
@@ -207,14 +242,15 @@ public class SchemaContext {
             }
         }
 
-        TypeSchemaMetadata typeSchemaMetadata = new TypeSchemaMetadata(name);
+        TypeSchemaMetadata typeSchemaMetadata = new TypeSchemaMetadata(name, clazz);
         schemaMap.put(clazz, typeSchemaMetadata);
         String basicInfo = name;
         if (StringUtils.hasLength(description)) {
             basicInfo += vinePrompter.delimiter(description);
         }
-
-        List<FieldSchemaMetadata> subFields = Arrays.stream(clazz.getDeclaredFields()).filter(this::filterFiled).map(this::getFieldSchemaMetadata).toList();
+        List<Field> fields = new ArrayList<>();
+        getAllFields(clazz, fields);
+        List<FieldSchemaMetadata> subFields = fields.stream().filter(this::filterFiled).map(this::getFieldSchemaMetadata).toList();
         StringBuilder subFieldsInfo = new StringBuilder();
         StringBuilder fullSchemaInfo = new StringBuilder(vinePrompter.header(3, basicInfo));
         if (!subFields.isEmpty()) {
@@ -225,11 +261,20 @@ public class SchemaContext {
         return typeSchemaMetadata;
     }
 
+    private void getAllFields(Class<?> clazz, List<Field> fields) {
+        if (clazz == null || clazz == Object.class) {
+            return;
+        }
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        getAllFields(clazz.getSuperclass(), fields);
+    }
+
     private boolean filterFiled(Field field) {
         if (Modifier.isStatic(field.getModifiers())) {
             return false;
         }
-        return true;
+        ChatSchemaField chatSchemaField = field.getDeclaredAnnotation(ChatSchemaField.class);
+        return chatSchemaField == null || !chatSchemaField.returnIgnore();
     }
 
     private FieldSchemaMetadata getFieldSchemaMetadata(Field field) {

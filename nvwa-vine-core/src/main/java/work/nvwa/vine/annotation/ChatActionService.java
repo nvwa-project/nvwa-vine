@@ -14,9 +14,25 @@ import java.lang.annotation.Target;
 @Documented
 @Component
 public @interface ChatActionService {
-    String systemPrompt() default "";
 
+    /**
+     * The action system message prompt prefix.
+     *
+     * @return system message prompt prefix
+     */
+    String systemPromptPrefix() default "";
+
+    /**
+     * The action user message prompt prefix.
+     *
+     * @return user message prompt prefix
+     */
     String userPromptPrefix() default "";
 
+    /**
+     * The action client level.
+     *
+     * @return client level
+     */
     String clientLevel() default "";
 }

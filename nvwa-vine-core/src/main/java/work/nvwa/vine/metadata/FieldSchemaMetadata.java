@@ -8,21 +8,21 @@ import java.lang.reflect.Field;
 public class FieldSchemaMetadata {
     private final String name;
     private final String type;
-    private final TypeSchemaMetadata typeSchema;
+    private final TypeSchemaMetadata typeSchemaMetadata;
     private final String description;
     private final String defaultValue;
     private final boolean nullable;
 
-    public FieldSchemaMetadata(Field field, TypeSchemaMetadata typeSchema) {
+    public FieldSchemaMetadata(Field field, TypeSchemaMetadata typeSchemaMetadata) {
         ChatSchemaField schemaField = field.getAnnotation(ChatSchemaField.class);
         this.name = field.getName();
-        this.typeSchema = typeSchema;
+        this.typeSchemaMetadata = typeSchemaMetadata;
         if (schemaField != null) {
             this.description = schemaField.description();
             this.defaultValue = schemaField.defaultValue();
             this.nullable = schemaField.nullable();
             if (SchemaFieldType.AUTO.equals(schemaField.type())) {
-                type = typeSchema.getName();
+                type = typeSchemaMetadata.getName();
             } else {
                 type = schemaField.type();
             }
@@ -30,7 +30,7 @@ public class FieldSchemaMetadata {
             this.description = "";
             this.defaultValue = "";
             this.nullable = false;
-            type = typeSchema.getName();
+            type = typeSchemaMetadata.getName();
         }
     }
 
@@ -49,4 +49,7 @@ public class FieldSchemaMetadata {
         return schema.toString();
     }
 
+    public TypeSchemaMetadata getTypeSchemaMetadata() {
+        return typeSchemaMetadata;
+    }
 }

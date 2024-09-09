@@ -10,6 +10,7 @@ public interface VineConstants {
     String DEFAULT_PERIOD_SYMBOL = ".";
     String DEFAULT_DEFAULT_VALUE = "default value is";
     String DEFAULT_NULLABLE = "nullable";
+    String DEFAULT_MISSION_TITLE = "Mission objective";
     String DEFAULT_INPUT_PARAMETERS_TITLE = "Input parameters";
     String DEFAULT_EXAMPLE_TITLE = "Example";
     String DEFAULT_EXAMPLE_PARAMETERS_TITLE = "Example parameters";

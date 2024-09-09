@@ -12,6 +12,7 @@ public class VinePromptProperties {
     private String periodSymbol = DEFAULT_PERIOD_SYMBOL;
     private String defaultValue = DEFAULT_DEFAULT_VALUE;
     private String nullable = DEFAULT_NULLABLE;
+    private String missionTitle = DEFAULT_MISSION_TITLE;
     private String inputParametersTitle = DEFAULT_INPUT_PARAMETERS_TITLE;
     private String exampleTitle = DEFAULT_EXAMPLE_TITLE;
     private String exampleParametersTitle = DEFAULT_EXAMPLE_PARAMETERS_TITLE;
@@ -66,6 +67,14 @@ public class VinePromptProperties {
 
     public void setNullable(String nullable) {
         this.nullable = nullable;
+    }
+
+    public String getMissionTitle() {
+        return missionTitle;
+    }
+
+    public void setMissionTitle(String missionTitle) {
+        this.missionTitle = missionTitle;
     }
 
     public String getInputParametersTitle() {

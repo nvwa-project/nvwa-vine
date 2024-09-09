@@ -21,4 +21,6 @@ public @interface ChatSchemaField {
     boolean nullable() default false;
 
     int order() default 0;
+
+    boolean returnIgnore() default false;
 }

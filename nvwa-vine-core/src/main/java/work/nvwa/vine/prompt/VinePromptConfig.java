@@ -7,6 +7,7 @@ public record VinePromptConfig(
         String periodSymbol,
         String defaultValue,
         String nullable,
+        String missionTitle,
         String inputParametersTitle,
         String exampleTitle,
         String exampleParametersTitle,

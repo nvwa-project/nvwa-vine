@@ -30,6 +30,7 @@ public class SingletonConfiguration {
                 DEFAULT_PERIOD_SYMBOL,
                 DEFAULT_DEFAULT_VALUE,
                 DEFAULT_NULLABLE,
+                DEFAULT_MISSION_TITLE,
                 DEFAULT_INPUT_PARAMETERS_TITLE,
                 DEFAULT_EXAMPLE_TITLE,
                 DEFAULT_EXAMPLE_PARAMETERS_TITLE,

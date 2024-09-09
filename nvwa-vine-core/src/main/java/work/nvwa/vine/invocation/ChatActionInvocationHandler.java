@@ -60,30 +60,32 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
     }
 
     private ChatActionMetadata buildChatActionMetadata(ChatActionService chatActionService, Method method) {
-        String systemPrompt = chatActionService.systemPrompt();
+        String systemPrompt = chatActionService.systemPromptPrefix();
         String userPrompt = chatActionService.userPromptPrefix();
         String clientLevel = chatActionService.clientLevel();
         ChatAction chatAction = method.getAnnotation(ChatAction.class);
-        String task = null;
+        String mission;
         SerializationType serializationType;
         if (chatAction != null) {
-            task = chatAction.task();
             clientLevel = chatAction.clientLevel();
             serializationType = chatAction.serializationType();
-            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, serializationType, chatAction.examples());
+            if (!chatAction.systemPromptPrefix().isEmpty()) {
+                systemPrompt = chatAction.systemPromptPrefix();
+            }
+            if (!chatAction.userPromptPrefix().isEmpty()) {
+                systemPrompt = chatAction.userPromptPrefix();
+            }
+            if (chatAction.mission().isEmpty()) {
+                mission = method.getName();
+            } else {
+                mission = chatAction.mission();
+            }
+            // append examples
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, chatAction.examples());
         } else {
             serializationType = SerializationType.Yaml;
-            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, serializationType, null);
-        }
-        if (task == null || task.isEmpty()) {
-            task = method.getName();
-        }
-
-
-        if (userPrompt.isEmpty()) {
-            userPrompt = task;
-        } else {
-            userPrompt += "\n" + task;
+            mission = method.getName();
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, null);
         }
 
         TypeReference<?> returnTypeRef = new TypeReference<>() {

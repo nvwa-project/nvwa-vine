@@ -40,6 +40,10 @@ public final class VinePrompter {
         return header(level) + text;
     }
 
+    public String missionTitle() {
+        return config.missionTitle();
+    }
+
     public String inputParameterTitle() {
         return config.inputParametersTitle();
     }

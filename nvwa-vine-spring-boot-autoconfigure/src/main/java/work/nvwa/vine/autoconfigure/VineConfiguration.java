@@ -95,6 +95,7 @@ public class VineConfiguration {
                 vinePromptProperties.getPeriodSymbol(),
                 vinePromptProperties.getDefaultValue(),
                 vinePromptProperties.getNullable(),
+                vinePromptProperties.getMissionTitle(),
                 vinePromptProperties.getInputParametersTitle(),
                 vinePromptProperties.getExampleTitle(),
                 vinePromptProperties.getExampleParametersTitle(),

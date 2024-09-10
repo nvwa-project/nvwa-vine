@@ -89,14 +89,14 @@ spring:
       apiKey: <your-api-key>
 ```
 
-Create an interface to access AI, and add the `@ChatActionService` annotation. The method parameter is the variable part of the user input, and the return value is the structured output of AI.
+Create an interface to access AI, and add the `@VineService` annotation. The method parameter is the variable part of the user input, and the return value is the structured output of AI.
 
 If the business scenario or return structure is more complex, you can use the corresponding annotation to add a description.
 
 
 ```java
 
-@ChatActionService
+@VineService
 public interface SqlAnalyzeService {
     QuerySqlMetadata analyzeSql(String sql);
 }

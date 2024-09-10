@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Stream;
 
+
+/**
+ * @author Geng Rong
+ */
 public interface ChatClientProvider {
     Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties);
 

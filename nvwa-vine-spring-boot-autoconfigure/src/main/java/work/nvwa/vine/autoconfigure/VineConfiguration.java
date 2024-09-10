@@ -26,6 +26,10 @@ import work.nvwa.vine.prompt.VinePrompter;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * @author Geng Rong
+ */
 @EnableVine
 @Configuration
 @EnableConfigurationProperties(VineProperties.class)
@@ -93,6 +97,8 @@ public class VineConfiguration {
                 vinePromptProperties.getHeaderSymbol(),
                 vinePromptProperties.getDelimiterSymbol(),
                 vinePromptProperties.getPeriodSymbol(),
+                vinePromptProperties.getItemSymbol(),
+                vinePromptProperties.getItemDescriptionSymbol(),
                 vinePromptProperties.getDefaultValue(),
                 vinePromptProperties.getNullable(),
                 vinePromptProperties.getMissionTitle(),

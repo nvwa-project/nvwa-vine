@@ -4,12 +4,17 @@ package work.nvwa.vine.autoconfigure;
 import static work.nvwa.vine.VineConstants.*;
 
 
+/**
+ * @author Geng Rong
+ */
 public class VinePromptProperties {
 
     private String newLine = DEFAULT_NEW_LINE;
     private String headerSymbol = DEFAULT_HEADER_SYMBOL;
     private String delimiterSymbol = DEFAULT_DELIMITER_SYMBOL;
     private String periodSymbol = DEFAULT_PERIOD_SYMBOL;
+    private String itemSymbol = DEFAULT_ITEM_SYMBOL;
+    private String itemDescriptionSymbol = DEFAULT_ITEM_DESCRIPTION_SYMBOL;
     private String defaultValue = DEFAULT_DEFAULT_VALUE;
     private String nullable = DEFAULT_NULLABLE;
     private String missionTitle = DEFAULT_MISSION_TITLE;
@@ -51,6 +56,22 @@ public class VinePromptProperties {
 
     public void setPeriodSymbol(String periodSymbol) {
         this.periodSymbol = periodSymbol;
+    }
+
+    public String getItemSymbol() {
+        return itemSymbol;
+    }
+
+    public void setItemSymbol(String itemSymbol) {
+        this.itemSymbol = itemSymbol;
+    }
+
+    public String getItemDescriptionSymbol() {
+        return itemDescriptionSymbol;
+    }
+
+    public void setItemDescriptionSymbol(String itemDescriptionSymbol) {
+        this.itemDescriptionSymbol = itemDescriptionSymbol;
     }
 
     public String getDefaultValue() {

@@ -1,5 +1,8 @@
 package work.nvwa.vine;
 
+/**
+ * @author Geng Rong
+ */
 public interface SchemaFieldType {
     String AUTO = "Auto";
     String STRING = "String";

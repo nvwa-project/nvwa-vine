@@ -5,6 +5,9 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author Geng Rong
+ */
 public class RoundRobinClientPool {
 
     private final AtomicInteger nextClientCyclicCounter = new AtomicInteger(0);

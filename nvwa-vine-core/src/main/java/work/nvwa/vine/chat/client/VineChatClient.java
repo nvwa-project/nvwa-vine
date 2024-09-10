@@ -6,6 +6,9 @@ import work.nvwa.vine.metadata.ChatActionMetadata;
 
 import java.util.List;
 
+/**
+ * @author Geng Rong
+ */
 public interface VineChatClient {
     <T> T call(List<ChatMessage> messages, ChatActionMetadata chatActionMetadata);
 }

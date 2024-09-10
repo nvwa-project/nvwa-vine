@@ -4,7 +4,7 @@
 
 Makes accessing AI simpler and more efficient
 
-[简体中文](./README.zh-CN.md) · English · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
+[简体中文](./README.zh-CN.md) · English
 
 </div>
 

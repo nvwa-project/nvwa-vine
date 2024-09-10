@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Geng Rong
+ */
 public class GradedVineChatClient implements VineChatClient {
     private final Map<String, RoundRobinClientPool> gradedClientMap;
 
@@ -21,7 +24,7 @@ public class GradedVineChatClient implements VineChatClient {
 
     @Override
     public <T> T call(List<ChatMessage> messages, ChatActionMetadata chatActionMetadata) {
-        SingletonVineChatClient chatClient = gradedClientMap.get(chatActionMetadata.getClientLevel()).next();
+        SingletonVineChatClient chatClient = gradedClientMap.get(chatActionMetadata.clientLevel()).next();
         return chatClient.call(messages, chatActionMetadata);
     }
 }

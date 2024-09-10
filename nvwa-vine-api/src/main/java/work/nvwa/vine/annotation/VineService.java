@@ -1,19 +1,19 @@
 package work.nvwa.vine.annotation;
 
 
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author Geng Rong
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-public @interface ChatActionService {
+public @interface VineService {
 
     /**
      * The action system message prompt prefix.

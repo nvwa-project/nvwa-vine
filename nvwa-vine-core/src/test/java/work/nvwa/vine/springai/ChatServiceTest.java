@@ -9,6 +9,10 @@ import work.nvwa.vine.springai.service.SqlAnalyzeService;
 
 import java.util.List;
 
+
+/**
+ * @author Geng Rong
+ */
 @SpringBootTest(classes = SingletonConfiguration.class)
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".*")
 public class ChatServiceTest {

@@ -6,8 +6,8 @@ import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.ApplicationContext;
 import work.nvwa.vine.SerializationType;
-import work.nvwa.vine.annotation.ChatAction;
-import work.nvwa.vine.annotation.ChatActionService;
+import work.nvwa.vine.annotation.VineAction;
+import work.nvwa.vine.annotation.VineService;
 import work.nvwa.vine.chat.ChatMessage;
 import work.nvwa.vine.chat.client.VineChatClient;
 import work.nvwa.vine.context.SchemaContext;
@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * @author Geng Rong
+ */
 public class ChatActionInvocationHandler implements MethodInterceptor {
 
     private final Map<Method, ChatActionMetadata> methodMetadataMap = new HashMap<>();
@@ -32,9 +36,9 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
 
     public ChatActionInvocationHandler(Class<?> chatActionServiceInterface, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        ChatActionService chatActionService = chatActionServiceInterface.getAnnotation(ChatActionService.class);
+        VineService vineService = chatActionServiceInterface.getAnnotation(VineService.class);
         for (Method method : chatActionServiceInterface.getMethods()) {
-            ChatActionMetadata metadata = buildChatActionMetadata(chatActionService, method);
+            ChatActionMetadata metadata = buildChatActionMetadata(vineService, method);
             methodMetadataMap.put(method, metadata);
         }
     }
@@ -52,38 +56,38 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
         }
         ChatActionMetadata metadata = methodMetadataMap.get(method);
         List<ChatMessage> messages = new ArrayList<>();
-        if (!metadata.getSystemPrompt().isBlank()) {
-            messages.add(ChatMessage.systemMessage(metadata.getSystemPrompt()));
+        if (!metadata.systemPrompt().isBlank()) {
+            messages.add(ChatMessage.systemMessage(metadata.systemPrompt()));
         }
         messages.add(ChatMessage.userMessage(schemaContext.buildUserMessage(metadata, argumentMap)));
         return getChatClient().call(messages, metadata);
     }
 
-    private ChatActionMetadata buildChatActionMetadata(ChatActionService chatActionService, Method method) {
-        String systemPrompt = chatActionService.systemPromptPrefix();
-        String userPrompt = chatActionService.userPromptPrefix();
-        String clientLevel = chatActionService.clientLevel();
-        ChatAction chatAction = method.getAnnotation(ChatAction.class);
+    private ChatActionMetadata buildChatActionMetadata(VineService vineService, Method method) {
+        String systemPrompt = vineService.systemPromptPrefix();
+        String userPrompt = vineService.userPromptPrefix();
+        String clientLevel = vineService.clientLevel();
+        VineAction vineAction = method.getAnnotation(VineAction.class);
         String mission;
         SerializationType serializationType;
-        if (chatAction != null) {
-            clientLevel = chatAction.clientLevel();
-            serializationType = chatAction.serializationType();
-            if (!chatAction.systemPromptPrefix().isEmpty()) {
-                systemPrompt = chatAction.systemPromptPrefix();
+        if (vineAction != null) {
+            clientLevel = vineAction.clientLevel();
+            serializationType = vineAction.serializationType();
+            if (!vineAction.systemPromptPrefix().isEmpty()) {
+                systemPrompt = vineAction.systemPromptPrefix();
             }
-            if (!chatAction.userPromptPrefix().isEmpty()) {
-                systemPrompt = chatAction.userPromptPrefix();
+            if (!vineAction.userPromptPrefix().isEmpty()) {
+                systemPrompt = vineAction.userPromptPrefix();
             }
-            if (chatAction.mission().isEmpty()) {
+            if (vineAction.mission().isEmpty()) {
                 mission = method.getName();
             } else {
-                mission = chatAction.mission();
+                mission = vineAction.mission();
             }
             // append examples
-            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, chatAction.examples());
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, vineAction.examples());
         } else {
-            serializationType = SerializationType.Yaml;
+            serializationType = SerializationType.Json;
             mission = method.getName();
             systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, null);
         }

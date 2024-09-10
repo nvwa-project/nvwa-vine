@@ -4,7 +4,7 @@
 
 让代码访问 AI 变得简单且高效
 
-简体中文 · [English](./README.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
+简体中文 · [English](./README.md)
 
 </div>
 
@@ -95,8 +95,7 @@ spring:
 如果业务场景或者返回结构比较复杂, 可以使用相应的注解来增加描述.
 
 ```java
-
-@ChatActionService
+@VineService
 public interface SqlAnalyzeService {
     QuerySqlMetadata analyzeSql(String sql);
 }
@@ -134,7 +133,6 @@ public enum OperatorType {
 在需要调用 AI 的地方, 注入接口, 调用对应方法即可.
 
 ```java
-
 @Component
 public class ChatServiceTest {
     private final SqlAnalyzeService sqlAnalyzeService;

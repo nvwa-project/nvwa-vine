@@ -4,10 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import work.nvwa.vine.SerializationType;
-import work.nvwa.vine.annotation.ChatSchemaField;
-import work.nvwa.vine.annotation.ChatSchemaType;
-import work.nvwa.vine.example.ChatActionExample;
-import work.nvwa.vine.example.ExampleCase;
+import work.nvwa.vine.annotation.VineEnumItem;
+import work.nvwa.vine.annotation.VineField;
+import work.nvwa.vine.annotation.VineType;
+import work.nvwa.vine.VineActionExample;
+import work.nvwa.vine.ExampleCase;
 import work.nvwa.vine.metadata.ChatActionMetadata;
 import work.nvwa.vine.metadata.FieldSchemaMetadata;
 import work.nvwa.vine.metadata.TypeSchemaMetadata;
@@ -34,6 +35,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+
+/**
+ * @author Geng Rong
+ */
 public class SchemaContext {
     private final ConcurrentHashMap<Type, TypeSchemaMetadata> schemaMap = new ConcurrentHashMap<>();
     private final VinePrompter vinePrompter;
@@ -107,8 +112,33 @@ public class SchemaContext {
             }
         } else if (type instanceof Class<?> clazz) {
             if (clazz.isEnum()) {
-                String enumValues = Arrays.stream(clazz.getEnumConstants()).map(Object::toString).collect(Collectors.joining(", "));
-                return new TypeSchemaMetadata("Enum, optional options include " + enumValues, type);
+                StringBuilder enumsDescription = new StringBuilder();
+                String enumValues = Arrays.stream(clazz.getEnumConstants()).map(item -> {
+                    if (item instanceof Enum<?> enumItem) {
+                        String enumName = enumItem.name();
+                        try {
+                            Field enumItemField = clazz.getDeclaredField(enumName);
+                            VineEnumItem vineEnumItem = enumItemField.getDeclaredAnnotation(VineEnumItem.class);
+                            if (vineEnumItem != null) {
+                                if (vineEnumItem.returnIgnore()) {
+                                    return null;
+                                }
+                                if (!vineEnumItem.description().isEmpty()) {
+                                    enumsDescription.append(vinePrompter.space(4)).append(vinePrompter.item(enumName, vineEnumItem.description())).append(vinePrompter.newLine());
+                                }
+                                return enumItem.name() + vinePrompter.delimiter(vineEnumItem.description());
+                            }
+                            return enumName;
+                        } catch (NoSuchFieldException ignored) {
+                        }
+                    }
+                    return null;
+                }).filter(Objects::nonNull).collect(Collectors.joining(", "));
+                String typeName = "Enum, optional options include " + enumValues;
+                if (!enumsDescription.isEmpty()) {
+                    typeName += vinePrompter.newLine() + enumsDescription;
+                }
+                return new TypeSchemaMetadata(typeName, type);
             } else if (clazz.isArray()) {
                 TypeSchemaMetadata itemType = getSchemaMetadata(clazz.getComponentType());
                 return new TypeSchemaMetadata(itemType.getName() + " Array", itemType.getTypes());
@@ -119,7 +149,7 @@ public class SchemaContext {
         throw new IllegalArgumentException("Unsupported type: " + type.getTypeName());
     }
 
-    public String buildSystemPrompt(Method method, String systemPromptPrefix, String actionMission, SerializationType serializationType, Class<? extends ChatActionExample>[] exampleClasses) {
+    public String buildSystemPrompt(Method method, String systemPromptPrefix, String actionMission, SerializationType serializationType, Class<? extends VineActionExample>[] exampleClasses) {
         StringBuilder systemPrompt = new StringBuilder(systemPromptPrefix);
         if (!systemPromptPrefix.isEmpty()) {
             systemPrompt.append(systemPromptPrefix).append(vinePrompter.newLine(2));
@@ -142,9 +172,9 @@ public class SchemaContext {
             StringBuilder examplePrompt = new StringBuilder(vinePrompter.newLine(2));
             List<String> parameterNames = Arrays.stream(method.getParameters()).map(Parameter::getName).toList();
             for (int i = 0; i < exampleClasses.length; i++) {
-                Class<? extends ChatActionExample> exampleClass = exampleClasses[i];
+                Class<? extends VineActionExample> exampleClass = exampleClasses[i];
                 try {
-                    ChatActionExample example = exampleClass.getDeclaredConstructor().newInstance();
+                    VineActionExample example = exampleClass.getDeclaredConstructor().newInstance();
                     ExampleCase exampleCase = example.exampleCase();
                     if (parameterNames.size() != exampleCase.parameters().length) {
                         String message = String.format("The example case %s parameters does not match the method %s.%s parameters", exampleClass.getCanonicalName(), method.getDeclaringClass().getCanonicalName(), method.getName());
@@ -178,10 +208,10 @@ public class SchemaContext {
     }
 
     public String buildUserMessage(ChatActionMetadata chatActionMetadata, Map<String, Object> parameters) {
-        StringBuilder userMessage = new StringBuilder(chatActionMetadata.getUserPrompt());
+        StringBuilder userMessage = new StringBuilder(chatActionMetadata.userPrompt());
         if (parameters != null && !parameters.isEmpty()) {
             String parametersPrompt = parameters.entrySet().stream()
-                    .map(entry -> buildParameterPrompt(entry.getKey(), entry.getValue(), chatActionMetadata.getSerializationType()))
+                    .map(entry -> buildParameterPrompt(entry.getKey(), entry.getValue(), chatActionMetadata.serializationType()))
                     .collect(Collectors.joining(vinePrompter.newLine()));
             if (!parametersPrompt.isEmpty()) {
                 userMessage.append(vinePrompter.newLine(2));
@@ -195,7 +225,7 @@ public class SchemaContext {
             userMessage.append(vinePrompter.newLine(2));
         }
         userMessage.append(vinePrompter.newLine(2));
-        switch (chatActionMetadata.getSerializationType()) {
+        switch (chatActionMetadata.serializationType()) {
             case Json -> userMessage.append(vinePrompter.returnJsonFormat());
             case Yaml -> userMessage.append(vinePrompter.returnYamlFormat());
         }
@@ -230,15 +260,15 @@ public class SchemaContext {
     }
 
     private TypeSchemaMetadata getSchemaMetadataByClass(Class<?> clazz) {
-        ChatSchemaType chatSchemaType = clazz.getDeclaredAnnotation(ChatSchemaType.class);
+        VineType vineType = clazz.getDeclaredAnnotation(VineType.class);
         String name = clazz.getSimpleName();
         String description = "";
-        if (chatSchemaType != null) {
-            if (!chatSchemaType.name().isEmpty()) {
-                name = chatSchemaType.name();
+        if (vineType != null) {
+            if (!vineType.name().isEmpty()) {
+                name = vineType.name();
             }
-            if (!chatSchemaType.description().isEmpty()) {
-                description = chatSchemaType.description();
+            if (!vineType.description().isEmpty()) {
+                description = vineType.description();
             }
         }
 
@@ -273,8 +303,8 @@ public class SchemaContext {
         if (Modifier.isStatic(field.getModifiers())) {
             return false;
         }
-        ChatSchemaField chatSchemaField = field.getDeclaredAnnotation(ChatSchemaField.class);
-        return chatSchemaField == null || !chatSchemaField.returnIgnore();
+        VineField vineField = field.getDeclaredAnnotation(VineField.class);
+        return vineField == null || !vineField.returnIgnore();
     }
 
     private FieldSchemaMetadata getFieldSchemaMetadata(Field field) {

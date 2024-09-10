@@ -1,11 +1,15 @@
 package work.nvwa.vine.springai.service;
 
-import work.nvwa.vine.example.ChatActionExample;
-import work.nvwa.vine.example.ExampleCase;
+import work.nvwa.vine.VineActionExample;
+import work.nvwa.vine.ExampleCase;
 
 import java.util.List;
 
-public class SqlAnalyzeExample implements ChatActionExample {
+
+/**
+ * @author Geng Rong
+ */
+public class SqlAnalyzeExample implements VineActionExample {
     @Override
     public ExampleCase exampleCase() {
         return new ExampleCase(

@@ -1,10 +1,13 @@
 package work.nvwa.vine.metadata;
 
 import work.nvwa.vine.SchemaFieldType;
-import work.nvwa.vine.annotation.ChatSchemaField;
+import work.nvwa.vine.annotation.VineField;
 
 import java.lang.reflect.Field;
 
+/**
+ * @author Geng Rong
+ */
 public class FieldSchemaMetadata {
     private final String name;
     private final String type;
@@ -14,7 +17,7 @@ public class FieldSchemaMetadata {
     private final boolean nullable;
 
     public FieldSchemaMetadata(Field field, TypeSchemaMetadata typeSchemaMetadata) {
-        ChatSchemaField schemaField = field.getAnnotation(ChatSchemaField.class);
+        VineField schemaField = field.getAnnotation(VineField.class);
         this.name = field.getName();
         this.typeSchemaMetadata = typeSchemaMetadata;
         if (schemaField != null) {

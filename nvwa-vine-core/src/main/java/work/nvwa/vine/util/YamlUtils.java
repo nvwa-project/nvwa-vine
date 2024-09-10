@@ -3,12 +3,8 @@ package work.nvwa.vine.util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
-import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
@@ -16,6 +12,10 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import java.io.IOException;
 import java.io.InputStream;
 
+
+/**
+ * @author Geng Rong
+ */
 public final class YamlUtils {
     private static final ObjectMapper YAML_OBJECT_MAPPER;
 
@@ -28,16 +28,7 @@ public final class YamlUtils {
         YAML_OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         YAML_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         YAML_OBJECT_MAPPER.registerModule(new KotlinModule.Builder().build());
-        YAML_OBJECT_MAPPER.addHandler(new DeserializationProblemHandler() {
-
-            @Override
-            public JavaType handleMissingTypeId(DeserializationContext ctxt, JavaType baseType, TypeIdResolver idResolver, String failureMsg) throws IOException {
-                if (!baseType.isInterface() && !baseType.isAbstract()) {
-                    return baseType;
-                }
-                return super.handleMissingTypeId(ctxt, baseType, idResolver, failureMsg);
-            }
-        });
+        YAML_OBJECT_MAPPER.addHandler(new MissingClassIdDeserializationHandler());
     }
 
     public static <T> T fromYaml(String yaml, Class<T> clazz) throws JsonProcessingException {

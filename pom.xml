@@ -27,6 +27,7 @@
         <module>nvwa-vine-bom</module>
         <module>nvwa-vine-test</module>
         <module>nvwa-vine-examples</module>
+        <module>nvwa-vine-api</module>
     </modules>
 
     <repositories>

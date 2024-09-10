@@ -6,6 +6,10 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import work.nvwa.vine.chat.ChatMessage;
 
+
+/**
+ * @author Geng Rong
+ */
 public final class MessageUtils {
     private MessageUtils() {
     }

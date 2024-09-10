@@ -7,6 +7,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * @author Geng Rong
+ */
 public class SpringPropertiesUtils {
 
     public static void copyProperties(Object target, Map<String, Object> properties) throws InvocationTargetException, IllegalAccessException {

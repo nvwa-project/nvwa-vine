@@ -6,6 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * @author Geng Rong
+ */
 @ConfigurationProperties(VineProperties.CONFIG_PREFIX)
 public class VineProperties {
     public static final String CONFIG_PREFIX = "nvwa.vine";

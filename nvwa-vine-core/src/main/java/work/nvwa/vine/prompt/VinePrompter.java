@@ -1,5 +1,8 @@
 package work.nvwa.vine.prompt;
 
+/**
+ * @author Geng Rong
+ */
 public final class VinePrompter {
 
     private final VinePromptConfig config;
@@ -9,11 +12,27 @@ public final class VinePrompter {
     }
 
     public String delimiter() {
-        return config.delimiterSymbol() + " ";
+        return config.delimiterSymbol() + space();
     }
 
     public String delimiter(String text) {
         return delimiter() + text;
+    }
+
+    public String item(String text) {
+        return config.itemSymbol() + space() + text;
+    }
+
+    public String item(String text, String description) {
+        return config.itemSymbol() + space() + text + space() + config.itemDescriptionSymbol() + space() + description;
+    }
+
+    public String space() {
+        return space(1);
+    }
+
+    public String space(int count) {
+        return " ".repeat(count);
     }
 
     public String newLine() {
@@ -33,7 +52,7 @@ public final class VinePrompter {
     }
 
     public String header(int level) {
-        return config.headerSymbol().repeat(level) + " ";
+        return config.headerSymbol().repeat(level) + space();
     }
 
     public String header(int level, String text) {

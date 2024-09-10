@@ -18,6 +18,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+
+/**
+ * @author Geng Rong
+ */
 public class QianFanChatClientProvider implements ChatClientProvider {
 
     private final Logger logger = LoggerFactory.getLogger(QianFanChatClientProvider.class);

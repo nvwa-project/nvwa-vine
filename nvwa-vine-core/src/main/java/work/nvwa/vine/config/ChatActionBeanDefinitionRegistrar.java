@@ -7,6 +7,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
+
+/**
+ * @author Geng Rong
+ */
 public class ChatActionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ApplicationContextAware {
     private ApplicationContext applicationContext;
 

@@ -1,11 +1,11 @@
 package work.nvwa.vine.springai.service;
 
-import work.nvwa.vine.annotation.ChatActionService;
-import work.nvwa.vine.annotation.ChatSchemaField;
+import work.nvwa.vine.annotation.VineService;
+import work.nvwa.vine.annotation.VineField;
 
 import java.util.List;
 
-@ChatActionService
+@VineService
 public interface SqlAnalyzeService {
 
     QuerySqlMetadata analyzeSql(String sql);
@@ -21,9 +21,9 @@ public interface SqlAnalyzeService {
 
     record QuerySqlMetadata(
             String table,
-            @ChatSchemaField(description = "return sorted by ascii code")
+            @VineField(description = "return sorted by ascii code")
             String[] select,
-            @ChatSchemaField(description = "The conditions within each group are combined with AND, while the groups are combined with OR")
+            @VineField(description = "The conditions within each group are combined with AND, while the groups are combined with OR")
             List<QueryConditionGroup> where,
             List<QueryOrderBy> orderBy
     ) {

@@ -1,5 +1,8 @@
 package work.nvwa.vine;
 
+/**
+ * @author Geng Rong
+ */
 public interface VineConstants {
     String BASIC_CHAT_CLIENT_LEVEL = "basic";
 
@@ -8,6 +11,8 @@ public interface VineConstants {
     String DEFAULT_HEADER_SYMBOL = "#";
     String DEFAULT_DELIMITER_SYMBOL = ",";
     String DEFAULT_PERIOD_SYMBOL = ".";
+    String DEFAULT_ITEM_SYMBOL = "-";
+    String DEFAULT_ITEM_DESCRIPTION_SYMBOL = ":";
     String DEFAULT_DEFAULT_VALUE = "default value is";
     String DEFAULT_NULLABLE = "nullable";
     String DEFAULT_MISSION_TITLE = "Mission objective";

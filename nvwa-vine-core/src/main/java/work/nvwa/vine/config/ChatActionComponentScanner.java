@@ -15,8 +15,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
-import work.nvwa.vine.annotation.ChatActionService;
-import work.nvwa.vine.annotation.NoChatModelService;
+import work.nvwa.vine.annotation.VineService;
+import work.nvwa.vine.annotation.NoVineService;
 import work.nvwa.vine.invocation.ChatActionServiceFactoryBean;
 
 import java.lang.annotation.Annotation;
@@ -28,8 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * @author gr@fastball.dev
- * @since 2024/8/31
+ * @author Geng Rong
  */
 public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
 
@@ -40,7 +39,7 @@ public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
 
     public ChatActionComponentScanner(BeanDefinitionRegistry registry) {
         super(registry, false);
-        addIncludeFilter(new AnnotationTypeFilter(ChatActionService.class));
+        addIncludeFilter(new AnnotationTypeFilter(VineService.class));
         this.registry = registry;
     }
 
@@ -68,7 +67,7 @@ public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
     @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
         AnnotationMetadata metadata = beanDefinition.getMetadata();
-        return metadata.isInterface() && metadata.hasAnnotation(ChatActionService.class.getName()) && !metadata.hasAnnotation(NoChatModelService.class.getName());
+        return metadata.isInterface() && metadata.hasAnnotation(VineService.class.getName()) && !metadata.hasAnnotation(NoVineService.class.getName());
     }
 
     private String[] findBasePackages(BeanDefinitionRegistry registry) {

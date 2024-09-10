@@ -12,6 +12,9 @@ import work.nvwa.vine.util.YamlUtils;
 
 import java.util.List;
 
+/**
+ * @author Geng Rong
+ */
 public class SingletonVineChatClient implements VineChatClient {
 
     private final ChatModel chatModel;
@@ -25,12 +28,12 @@ public class SingletonVineChatClient implements VineChatClient {
         Message[] messageArray = messages.stream().map(MessageUtils::convert).toArray(Message[]::new);
         String responseText = chatModel.call(messageArray);
         try {
-            if (chatActionMetadata.getSerializationType() == SerializationType.Yaml) {
-                return (T) YamlUtils.fromYamlWithoutEnclosure(responseText, chatActionMetadata.getReturnTypeRef());
-            } else if (chatActionMetadata.getSerializationType() == SerializationType.Json) {
-                return (T) JsonUtils.fromJsonWithoutEnclosure(responseText, chatActionMetadata.getReturnTypeRef());
+            if (chatActionMetadata.serializationType() == SerializationType.Yaml) {
+                return (T) YamlUtils.fromYamlWithoutEnclosure(responseText, chatActionMetadata.returnTypeRef());
+            } else if (chatActionMetadata.serializationType() == SerializationType.Json) {
+                return (T) JsonUtils.fromJsonWithoutEnclosure(responseText, chatActionMetadata.returnTypeRef());
             } else {
-                throw new IllegalArgumentException("Unsupported SerializationType " + chatActionMetadata.getSerializationType());
+                throw new IllegalArgumentException("Unsupported SerializationType " + chatActionMetadata.serializationType());
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

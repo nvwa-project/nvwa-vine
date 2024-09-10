@@ -16,6 +16,10 @@ import work.nvwa.vine.prompt.VinePrompter;
 
 import static work.nvwa.vine.VineConstants.*;
 
+
+/**
+ * @author Geng Rong
+ */
 @EnableVine
 @ActiveProfiles("singleton")
 @SpringBootConfiguration
@@ -28,6 +32,8 @@ public class SingletonConfiguration {
                 DEFAULT_HEADER_SYMBOL,
                 DEFAULT_DELIMITER_SYMBOL,
                 DEFAULT_PERIOD_SYMBOL,
+                DEFAULT_ITEM_SYMBOL,
+                DEFAULT_ITEM_DESCRIPTION_SYMBOL,
                 DEFAULT_DEFAULT_VALUE,
                 DEFAULT_NULLABLE,
                 DEFAULT_MISSION_TITLE,

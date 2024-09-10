@@ -1,5 +1,8 @@
 package work.nvwa.vine.chat;
 
+/**
+ * @author Geng Rong
+ */
 public enum ChatMessageType {
     USER("user"),
     ASSISTANT("assistant"),

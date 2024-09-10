@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author Geng Rong
+ */
 public class TypeSchemaMetadata {
     private final String name;
     private final List<Type> types;

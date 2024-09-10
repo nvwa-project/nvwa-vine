@@ -2,6 +2,10 @@ package work.nvwa.vine.autoconfigure;
 
 import java.util.Map;
 
+
+/**
+ * @author Geng Rong
+ */
 public class CommonChatModelProperties {
     private String baseUrl;
     private String apiKey;

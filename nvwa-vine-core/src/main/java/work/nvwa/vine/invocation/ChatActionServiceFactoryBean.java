@@ -6,6 +6,10 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+
+/**
+ * @author Geng Rong
+ */
 public class ChatActionServiceFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware {
     private final Class<T> chatActionServiceInterface;
     private ApplicationContext applicationContext;

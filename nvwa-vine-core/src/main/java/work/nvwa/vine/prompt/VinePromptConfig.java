@@ -1,10 +1,15 @@
 package work.nvwa.vine.prompt;
 
+/**
+ * @author Geng Rong
+ */
 public record VinePromptConfig(
         String newLine,
         String headerSymbol,
         String delimiterSymbol,
         String periodSymbol,
+        String itemSymbol,
+        String itemDescriptionSymbol,
         String defaultValue,
         String nullable,
         String missionTitle,

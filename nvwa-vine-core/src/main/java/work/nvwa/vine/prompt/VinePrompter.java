@@ -24,7 +24,11 @@ public final class VinePrompter {
     }
 
     public String item(String text, String description) {
-        return config.itemSymbol() + space() + text + space() + config.itemDescriptionSymbol() + space() + description;
+        return config.itemSymbol() + space() + text + space() + config.descriptionSymbol() + space() + description;
+    }
+
+    public String description(String text) {
+        return config.descriptionSymbol() + space() + text;
     }
 
     public String space() {
@@ -77,6 +81,10 @@ public final class VinePrompter {
 
     public String exampleReturnTitle() {
         return config.exampleReturnTitle();
+    }
+
+    public String schemaTitle() {
+        return config.schemaTitle();
     }
 
     public String returnSchemaTitle() {

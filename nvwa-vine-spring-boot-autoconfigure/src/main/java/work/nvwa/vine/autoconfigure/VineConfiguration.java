@@ -98,7 +98,7 @@ public class VineConfiguration {
                 vinePromptProperties.getDelimiterSymbol(),
                 vinePromptProperties.getPeriodSymbol(),
                 vinePromptProperties.getItemSymbol(),
-                vinePromptProperties.getItemDescriptionSymbol(),
+                vinePromptProperties.getDescriptionSymbol(),
                 vinePromptProperties.getDefaultValue(),
                 vinePromptProperties.getNullable(),
                 vinePromptProperties.getMissionTitle(),
@@ -106,6 +106,7 @@ public class VineConfiguration {
                 vinePromptProperties.getExampleTitle(),
                 vinePromptProperties.getExampleParametersTitle(),
                 vinePromptProperties.getExampleReturnTitle(),
+                vinePromptProperties.getSchemaTitle(),
                 vinePromptProperties.getReturnSchemaTitle(),
                 vinePromptProperties.getReturnJsonFormat(),
                 vinePromptProperties.getReturnYamlFormat()

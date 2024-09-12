@@ -1,6 +1,6 @@
 package examples.web;
 
-import examples.action.SqlAnalyzeChatActionService;
+import examples.action.SqlAnalyzeService;
 import examples.model.QuerySqlMetadata;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ExampleAnalyzeRest {
 
-    private final SqlAnalyzeChatActionService sqlAnalyzeChatActionService;
+    private final SqlAnalyzeService sqlAnalyzeService;
 
-    public ExampleAnalyzeRest(SqlAnalyzeChatActionService sqlAnalyzeChatActionService) {
-        this.sqlAnalyzeChatActionService = sqlAnalyzeChatActionService;
+    public ExampleAnalyzeRest(SqlAnalyzeService sqlAnalyzeService) {
+        this.sqlAnalyzeService = sqlAnalyzeService;
     }
 
     @PostMapping("/api/analyze/sql")
     public QuerySqlMetadata analyzeSql(@RequestBody String sql) {
         Assert.notNull(sql, "SQL request body can not be null");
-        return sqlAnalyzeChatActionService.analyzeSql(sql);
+        return sqlAnalyzeService.analyzeSql(sql);
     }
 }

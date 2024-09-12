@@ -11,12 +11,12 @@ import org.springframework.core.type.AnnotationMetadata;
 /**
  * @author Geng Rong
  */
-public class ChatActionBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ApplicationContextAware {
+public class VineServiceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        ChatActionComponentScanner scanner = new ChatActionComponentScanner(registry);
+        VineServiceComponentScanner scanner = new VineServiceComponentScanner(registry);
         scanner.scan(applicationContext);
     }
 

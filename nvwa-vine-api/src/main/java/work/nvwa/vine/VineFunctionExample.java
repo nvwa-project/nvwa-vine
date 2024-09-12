@@ -3,6 +3,6 @@ package work.nvwa.vine;
 /**
  * @author Geng Rong
  */
-public interface VineActionExample {
+public interface VineFunctionExample {
     ExampleCase exampleCase();
 }

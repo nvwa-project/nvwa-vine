@@ -9,7 +9,7 @@ public record VinePromptConfig(
         String delimiterSymbol,
         String periodSymbol,
         String itemSymbol,
-        String itemDescriptionSymbol,
+        String descriptionSymbol,
         String defaultValue,
         String nullable,
         String missionTitle,
@@ -17,6 +17,7 @@ public record VinePromptConfig(
         String exampleTitle,
         String exampleParametersTitle,
         String exampleReturnTitle,
+        String schemaTitle,
         String returnSchemaTitle,
         String returnJsonFormat,
         String returnYamlFormat

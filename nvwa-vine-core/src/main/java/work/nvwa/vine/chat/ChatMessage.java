@@ -13,4 +13,8 @@ public record ChatMessage(ChatMessageType type, String content) {
     public static ChatMessage userMessage(String content) {
         return new ChatMessage(ChatMessageType.USER, content);
     }
+
+    public static ChatMessage assistantMessage(String content) {
+        return new ChatMessage(ChatMessageType.ASSISTANT, content);
+    }
 }

@@ -9,7 +9,7 @@ import work.nvwa.vine.annotation.VineService;
  * @author Geng Rong
  */
 @VineService
-public interface SqlAnalyzeChatActionService {
+public interface SqlAnalyzeService {
     QuerySqlMetadata analyzeSql(String sql);
 }
 

@@ -10,25 +10,25 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * @author Geng Rong
  */
-public class ChatActionServiceFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware {
-    private final Class<T> chatActionServiceInterface;
+public class ChatServiceFactoryBean<T> implements FactoryBean<T>, ApplicationContextAware {
+    private final Class<T> chatServiceInterface;
     private ApplicationContext applicationContext;
 
-    public ChatActionServiceFactoryBean(Class<T> chatActionServiceInterface) {
-        this.chatActionServiceInterface = chatActionServiceInterface;
+    public ChatServiceFactoryBean(Class<T> chatServiceInterface) {
+        this.chatServiceInterface = chatServiceInterface;
     }
 
     @Override
     public T getObject() {
         Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(chatActionServiceInterface);
-        enhancer.setCallback(new ChatActionInvocationHandler(chatActionServiceInterface, applicationContext));
+        enhancer.setSuperclass(chatServiceInterface);
+        enhancer.setCallback(new VineServiceInvocationHandler(chatServiceInterface, applicationContext));
         return (T) enhancer.create();
     }
 
     @Override
     public Class<T> getObjectType() {
-        return chatActionServiceInterface;
+        return chatServiceInterface;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package work.nvwa.vine.springai.service;
 
-import work.nvwa.vine.annotation.VineAction;
+import work.nvwa.vine.annotation.VineFunction;
 import work.nvwa.vine.annotation.VineService;
 import work.nvwa.vine.annotation.VineField;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @VineService
 public interface SqlAnalyzeService {
 
-    @VineAction(
+    @VineFunction(
             examples = SqlAnalyzeExample.class
     )
     QuerySqlMetadata analyzeSql(String sql);

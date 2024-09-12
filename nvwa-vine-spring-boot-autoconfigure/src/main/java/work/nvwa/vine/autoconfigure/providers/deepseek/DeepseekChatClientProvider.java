@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static work.nvwa.vine.autoconfigure.providers.deepseek.DeepseekConstants.*;
+
 
 /**
  * @author Geng Rong
@@ -38,15 +40,19 @@ public class DeepseekChatClientProvider implements ChatClientProvider {
                 if (StringUtils.hasText(clientProperties.getBaseUrl())) {
                     springApi = new OpenAiApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
                 } else {
-                    springApi = new OpenAiApi(clientProperties.getApiKey());
+                    springApi = new OpenAiApi(BASE_URL, clientProperties.getApiKey());
                 }
 
                 ChatModel chatModel;
                 if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
-                    chatModel = new OpenAiChatModel(springApi);
+                    OpenAiChatOptions options = OpenAiChatOptions.builder().withModel(DEFAULT_CHAT_MODEL).withTemperature(DEFAULT_TEMPERATURE).build();
+                    chatModel = new OpenAiChatModel(springApi, options);
                 } else {
                     OpenAiChatOptions options = new OpenAiChatOptions();
                     SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
+                    if (options.getModel() == null) {
+                        options.setModel(DEFAULT_CHAT_MODEL);
+                    }
                     chatModel = new OpenAiChatModel(springApi, options);
                 }
                 return new SingletonVineChatClient(chatModel);

@@ -10,14 +10,14 @@ import static work.nvwa.vine.VineConstants.BASIC_CHAT_CLIENT_LEVEL;
 /**
  * @author Geng Rong
  */
-public record ChatActionMetadata(
+public record VineFunctionMetadata(
         String userPrompt,
         String systemPrompt,
         String clientLevel,
         SerializationType serializationType,
         TypeReference<?> returnTypeRef
 ) {
-    public ChatActionMetadata(String userPrompt, String systemPrompt, String clientLevel, SerializationType serializationType, TypeReference<?> returnTypeRef) {
+    public VineFunctionMetadata(String userPrompt, String systemPrompt, String clientLevel, SerializationType serializationType, TypeReference<?> returnTypeRef) {
         this.userPrompt = userPrompt;
         this.systemPrompt = systemPrompt;
         if (StringUtils.hasLength(clientLevel)) {

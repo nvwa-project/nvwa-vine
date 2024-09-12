@@ -6,12 +6,12 @@ import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 import org.springframework.context.ApplicationContext;
 import work.nvwa.vine.SerializationType;
-import work.nvwa.vine.annotation.VineAction;
+import work.nvwa.vine.annotation.VineFunction;
 import work.nvwa.vine.annotation.VineService;
 import work.nvwa.vine.chat.ChatMessage;
 import work.nvwa.vine.chat.client.VineChatClient;
 import work.nvwa.vine.context.SchemaContext;
-import work.nvwa.vine.metadata.ChatActionMetadata;
+import work.nvwa.vine.metadata.VineFunctionMetadata;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,19 +26,19 @@ import java.util.Map;
 /**
  * @author Geng Rong
  */
-public class ChatActionInvocationHandler implements MethodInterceptor {
+public class VineServiceInvocationHandler implements MethodInterceptor {
 
-    private final Map<Method, ChatActionMetadata> methodMetadataMap = new HashMap<>();
+    private final Map<Method, VineFunctionMetadata> methodMetadataMap = new HashMap<>();
     private final ApplicationContext applicationContext;
 
     private SchemaContext schemaContext;
     private VineChatClient chatClient;
 
-    public ChatActionInvocationHandler(Class<?> chatActionServiceInterface, ApplicationContext applicationContext) {
+    public VineServiceInvocationHandler(Class<?> vineServiceInterface, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        VineService vineService = chatActionServiceInterface.getAnnotation(VineService.class);
-        for (Method method : chatActionServiceInterface.getMethods()) {
-            ChatActionMetadata metadata = buildChatActionMetadata(vineService, method);
+        VineService vineService = vineServiceInterface.getAnnotation(VineService.class);
+        for (Method method : vineServiceInterface.getMethods()) {
+            VineFunctionMetadata metadata = buildChatActionMetadata(vineService, method);
             methodMetadataMap.put(method, metadata);
         }
     }
@@ -54,7 +54,7 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
             String name = parameters[i].getName();
             argumentMap.put(name, args[i]);
         }
-        ChatActionMetadata metadata = methodMetadataMap.get(method);
+        VineFunctionMetadata metadata = methodMetadataMap.get(method);
         List<ChatMessage> messages = new ArrayList<>();
         if (!metadata.systemPrompt().isBlank()) {
             messages.add(ChatMessage.systemMessage(metadata.systemPrompt()));
@@ -63,29 +63,29 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
         return getChatClient().call(messages, metadata);
     }
 
-    private ChatActionMetadata buildChatActionMetadata(VineService vineService, Method method) {
+    private VineFunctionMetadata buildChatActionMetadata(VineService vineService, Method method) {
         String systemPrompt = vineService.systemPromptPrefix();
         String userPrompt = vineService.userPromptPrefix();
         String clientLevel = vineService.clientLevel();
-        VineAction vineAction = method.getAnnotation(VineAction.class);
+        VineFunction vineFunction = method.getAnnotation(VineFunction.class);
         String mission;
         SerializationType serializationType;
-        if (vineAction != null) {
-            clientLevel = vineAction.clientLevel();
-            serializationType = vineAction.serializationType();
-            if (!vineAction.systemPromptPrefix().isEmpty()) {
-                systemPrompt = vineAction.systemPromptPrefix();
+        if (vineFunction != null) {
+            clientLevel = vineFunction.clientLevel();
+            serializationType = vineFunction.serializationType();
+            if (!vineFunction.systemPromptPrefix().isEmpty()) {
+                systemPrompt = vineFunction.systemPromptPrefix();
             }
-            if (!vineAction.userPromptPrefix().isEmpty()) {
-                systemPrompt = vineAction.userPromptPrefix();
+            if (!vineFunction.userPromptPrefix().isEmpty()) {
+                systemPrompt = vineFunction.userPromptPrefix();
             }
-            if (vineAction.mission().isEmpty()) {
+            if (vineFunction.mission().isEmpty()) {
                 mission = method.getName();
             } else {
-                mission = vineAction.mission();
+                mission = vineFunction.mission();
             }
             // append examples
-            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, vineAction.examples());
+            systemPrompt = getSchemaContext().buildSystemPrompt(method, systemPrompt, mission, serializationType, vineFunction.examples());
         } else {
             serializationType = SerializationType.Json;
             mission = method.getName();
@@ -99,7 +99,7 @@ public class ChatActionInvocationHandler implements MethodInterceptor {
             }
         };
 
-        return new ChatActionMetadata(userPrompt, systemPrompt, clientLevel, serializationType, returnTypeRef);
+        return new VineFunctionMetadata(userPrompt, systemPrompt, clientLevel, serializationType, returnTypeRef);
     }
 
     private VineChatClient getChatClient() {

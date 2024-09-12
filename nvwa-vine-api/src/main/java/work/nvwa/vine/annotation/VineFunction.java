@@ -1,7 +1,7 @@
 package work.nvwa.vine.annotation;
 
-import work.nvwa.vine.VineActionExample;
 import work.nvwa.vine.SerializationType;
+import work.nvwa.vine.VineFunctionExample;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -15,18 +15,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface VineAction {
+public @interface VineFunction {
 
     /**
-     * The action mission objective.
+     * The function mission objective.
      * If not set, use the method name as the mission
      *
-     * @return action mission
+     * @return function mission
      */
     String mission() default "";
 
     /**
-     * The action system message prompt prefix.
+     * The chat system message prompt prefix.
      * If not set, use the default value in the annotation {@link VineService} parameter systemPromptPrefix
      *
      * @return system message prompt prefix
@@ -34,7 +34,7 @@ public @interface VineAction {
     String systemPromptPrefix() default "";
 
     /**
-     * The action user message prompt prefix.
+     * The chat user message prompt prefix.
      * If not set, use the default value in the annotation {@link VineService} parameter userPromptPrefix
      *
      * @return user message prompt prefix
@@ -42,25 +42,33 @@ public @interface VineAction {
     String userPromptPrefix() default "";
 
     /**
-     * The action client level.
+     * The chat model client level.
      * If not set, use the default value in the annotation {@link VineService} parameter clientLevel
      *
-     * @return client level
+     * @return chat model client level
      */
     String clientLevel() default "";
 
     /**
+     * The maximum number of tokens to generate
+     * Default is -1, which means no limit.
+     *
+     * @return max tokens limit
+     */
+    int maxTokens() default -1;
+
+    /**
      * The action parameters and return value serialization type.
-     * default use json format, support yaml format
+     * default use yaml format, support json format
      *
      * @return serialization type
      */
-    SerializationType serializationType() default SerializationType.Json;
+    SerializationType serializationType() default SerializationType.Yaml;
 
     /**
      * The action few-shot learning examples. which will be set to the system message prompt
      *
      * @return action examples
      */
-    Class<? extends VineActionExample>[] examples() default {};
+    Class<? extends VineFunctionExample>[] examples() default {};
 }

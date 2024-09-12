@@ -16,21 +16,21 @@ import java.lang.annotation.Target;
 public @interface VineService {
 
     /**
-     * The action system message prompt prefix.
+     * The chat system message prompt prefix.
      *
      * @return system message prompt prefix
      */
     String systemPromptPrefix() default "";
 
     /**
-     * The action user message prompt prefix.
+     * The chat user message prompt prefix.
      *
      * @return user message prompt prefix
      */
     String userPromptPrefix() default "";
 
     /**
-     * The action client level.
+     * The chat model client level.
      *
      * @return client level
      */

@@ -1,7 +1,7 @@
 package work.nvwa.vine.chat.client;
 
 import work.nvwa.vine.chat.ChatMessage;
-import work.nvwa.vine.metadata.ChatActionMetadata;
+import work.nvwa.vine.metadata.VineFunctionMetadata;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +23,8 @@ public class GradedVineChatClient implements VineChatClient {
     }
 
     @Override
-    public <T> T call(List<ChatMessage> messages, ChatActionMetadata chatActionMetadata) {
-        SingletonVineChatClient chatClient = gradedClientMap.get(chatActionMetadata.clientLevel()).next();
-        return chatClient.call(messages, chatActionMetadata);
+    public <T> T call(List<ChatMessage> messages, VineFunctionMetadata vineFunctionMetadata) {
+        SingletonVineChatClient chatClient = gradedClientMap.get(vineFunctionMetadata.clientLevel()).next();
+        return chatClient.call(messages, vineFunctionMetadata);
     }
 }

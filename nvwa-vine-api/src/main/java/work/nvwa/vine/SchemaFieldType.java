@@ -6,6 +6,7 @@ package work.nvwa.vine;
 public interface SchemaFieldType {
     String AUTO = "Auto";
     String STRING = "String";
+    String INTEGER = "Integer";
     String NUMBER = "Number";
     String BOOLEAN = "Boolean";
     String DATE = "Date";

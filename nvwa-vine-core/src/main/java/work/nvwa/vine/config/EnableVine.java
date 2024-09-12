@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(ChatActionBeanDefinitionRegistrar.class)
+@Import(VineServiceBeanDefinitionRegistrar.class)
 public @interface EnableVine {
 }

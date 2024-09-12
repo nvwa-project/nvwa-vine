@@ -17,7 +17,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 import work.nvwa.vine.annotation.VineService;
 import work.nvwa.vine.annotation.NoVineService;
-import work.nvwa.vine.invocation.ChatActionServiceFactoryBean;
+import work.nvwa.vine.invocation.ChatServiceFactoryBean;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
 /**
  * @author Geng Rong
  */
-public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
+public class VineServiceComponentScanner extends ClassPathBeanDefinitionScanner {
 
     private static final Class<? extends Annotation>[] INCLUDED_ANNOTATION_TYPES = new Class[]{};
 
     private final BeanNameGenerator beanNameGenerator = FullyQualifiedAnnotationBeanNameGenerator.INSTANCE;
     private final BeanDefinitionRegistry registry;
 
-    public ChatActionComponentScanner(BeanDefinitionRegistry registry) {
+    public VineServiceComponentScanner(BeanDefinitionRegistry registry) {
         super(registry, false);
         addIncludeFilter(new AnnotationTypeFilter(VineService.class));
         this.registry = registry;
@@ -85,7 +85,7 @@ public class ChatActionComponentScanner extends ClassPathBeanDefinitionScanner {
         if (!this.registry.containsBeanDefinition(beanName)) {
             try {
                 Class<?> repositoryInterface = Class.forName(className);
-                ChatActionServiceFactoryBean<?> factoryBean = new ChatActionServiceFactoryBean<>(repositoryInterface);
+                ChatServiceFactoryBean<?> factoryBean = new ChatServiceFactoryBean<>(repositoryInterface);
                 RootBeanDefinition beanDefinition = new RootBeanDefinition(repositoryInterface);
                 beanDefinition.setInstanceSupplier(() -> factoryBean);
                 BeanDefinitionHolder definitionHolder = new BeanComponentDefinition(beanDefinition, beanName);

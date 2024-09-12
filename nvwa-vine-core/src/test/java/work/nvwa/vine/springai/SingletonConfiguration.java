@@ -33,7 +33,7 @@ public class SingletonConfiguration {
                 DEFAULT_DELIMITER_SYMBOL,
                 DEFAULT_PERIOD_SYMBOL,
                 DEFAULT_ITEM_SYMBOL,
-                DEFAULT_ITEM_DESCRIPTION_SYMBOL,
+                DEFAULT_DESCRIPTION_SYMBOL,
                 DEFAULT_DEFAULT_VALUE,
                 DEFAULT_NULLABLE,
                 DEFAULT_MISSION_TITLE,
@@ -41,6 +41,7 @@ public class SingletonConfiguration {
                 DEFAULT_EXAMPLE_TITLE,
                 DEFAULT_EXAMPLE_PARAMETERS_TITLE,
                 DEFAULT_EXAMPLE_RETURN_TITLE,
+                DEFAULT_SCHEMA_TITLE,
                 DEFAULT_RETURN_SCHEMA_TITLE,
                 DEFAULT_RETURN_JSON_FORMAT,
                 DEFAULT_RETURN_YAML_FORMAT

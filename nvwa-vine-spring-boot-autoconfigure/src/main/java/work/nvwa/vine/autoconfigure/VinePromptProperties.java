@@ -14,7 +14,7 @@ public class VinePromptProperties {
     private String delimiterSymbol = DEFAULT_DELIMITER_SYMBOL;
     private String periodSymbol = DEFAULT_PERIOD_SYMBOL;
     private String itemSymbol = DEFAULT_ITEM_SYMBOL;
-    private String itemDescriptionSymbol = DEFAULT_ITEM_DESCRIPTION_SYMBOL;
+    private String descriptionSymbol = DEFAULT_DESCRIPTION_SYMBOL;
     private String defaultValue = DEFAULT_DEFAULT_VALUE;
     private String nullable = DEFAULT_NULLABLE;
     private String missionTitle = DEFAULT_MISSION_TITLE;
@@ -22,6 +22,7 @@ public class VinePromptProperties {
     private String exampleTitle = DEFAULT_EXAMPLE_TITLE;
     private String exampleParametersTitle = DEFAULT_EXAMPLE_PARAMETERS_TITLE;
     private String exampleReturnTitle = DEFAULT_EXAMPLE_RETURN_TITLE;
+    private String schemaTitle = DEFAULT_SCHEMA_TITLE;
     private String returnSchemaTitle = DEFAULT_RETURN_SCHEMA_TITLE;
     private String returnJsonFormat = DEFAULT_RETURN_JSON_FORMAT;
     private String returnYamlFormat = DEFAULT_RETURN_YAML_FORMAT;
@@ -66,12 +67,12 @@ public class VinePromptProperties {
         this.itemSymbol = itemSymbol;
     }
 
-    public String getItemDescriptionSymbol() {
-        return itemDescriptionSymbol;
+    public String getDescriptionSymbol() {
+        return descriptionSymbol;
     }
 
-    public void setItemDescriptionSymbol(String itemDescriptionSymbol) {
-        this.itemDescriptionSymbol = itemDescriptionSymbol;
+    public void setDescriptionSymbol(String descriptionSymbol) {
+        this.descriptionSymbol = descriptionSymbol;
     }
 
     public String getDefaultValue() {
@@ -128,6 +129,14 @@ public class VinePromptProperties {
 
     public void setExampleReturnTitle(String exampleReturnTitle) {
         this.exampleReturnTitle = exampleReturnTitle;
+    }
+
+    public String getSchemaTitle() {
+        return schemaTitle;
+    }
+
+    public void setSchemaTitle(String schemaTitle) {
+        this.schemaTitle = schemaTitle;
     }
 
     public String getReturnSchemaTitle() {

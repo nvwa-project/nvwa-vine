@@ -1,6 +1,6 @@
 package work.nvwa.vine.springai.service;
 
-import work.nvwa.vine.VineActionExample;
+import work.nvwa.vine.VineFunctionExample;
 import work.nvwa.vine.ExampleCase;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author Geng Rong
  */
-public class SqlAnalyzeExample implements VineActionExample {
+public class SqlAnalyzeExample implements VineFunctionExample {
     @Override
     public ExampleCase exampleCase() {
         return new ExampleCase(

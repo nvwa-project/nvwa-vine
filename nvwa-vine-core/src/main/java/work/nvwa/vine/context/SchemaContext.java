@@ -10,6 +10,7 @@ import work.nvwa.vine.VineFunctionExample;
 import work.nvwa.vine.annotation.VineEnumItem;
 import work.nvwa.vine.annotation.VineField;
 import work.nvwa.vine.annotation.VineType;
+import work.nvwa.vine.chat.ChatMessage;
 import work.nvwa.vine.metadata.FieldSchemaMetadata;
 import work.nvwa.vine.metadata.TypeSchemaMetadata;
 import work.nvwa.vine.metadata.VineFunctionMetadata;
@@ -49,19 +50,22 @@ public class SchemaContext {
         this.vinePrompter = vinePrompter;
     }
 
-    public String buildSchemaPrompt(Type type, SerializationType serializationType) {
-        TypeSchemaMetadata rootSchema = getSchemaMetadata(type);
+    public String buildTypeSchemaPrompt(Type type, SerializationType serializationType) {
+        TypeSchemaMetadata rootSchema = getOrBuildTypeSchemaMetadata(type);
 
         Set<Type> subTypes = new HashSet<>();
         fillSubTypes(rootSchema, subTypes);
 
-        StringBuilder schema = new StringBuilder(vinePrompter.header(2, vinePrompter.schemaTitle()));
+        StringBuilder schema = new StringBuilder(vinePrompter.header(2, vinePrompter.schemasTitle()));
         schema.append(vinePrompter.newLine(2));
 
         subTypes.stream().map(schemaMap::get).filter(Objects::nonNull).forEach(it -> schema.append(it.getFullSchemaInfo()).append(vinePrompter.newLine(2)));
 
         schema.append(vinePrompter.header(2, vinePrompter.returnSchemaTitle()));
         schema.append(vinePrompter.description(rootSchema.getName()));
+        if (!rootSchema.getName().endsWith(" Array")) {
+            schema.append(vinePrompter.delimiter("Single object, not array"));
+        }
         schema.append(vinePrompter.newLine(2));
         schema.append(vinePrompter.header(2));
         switch (serializationType) {
@@ -89,7 +93,7 @@ public class SchemaContext {
         }
     }
 
-    private TypeSchemaMetadata getSchemaMetadata(Type type) {
+    private TypeSchemaMetadata getOrBuildTypeSchemaMetadata(Type type) {
         if (schemaMap.containsKey(type)) {
             return schemaMap.get(type);
         }
@@ -112,14 +116,14 @@ public class SchemaContext {
             if (parameterizedType.getRawType() instanceof Class<?> rowType) {
                 if (Collection.class.isAssignableFrom(rowType)) {
                     if (actualTypeArguments.length > 0) {
-                        TypeSchemaMetadata itemType = getSchemaMetadata(actualTypeArguments[0]);
+                        TypeSchemaMetadata itemType = getOrBuildTypeSchemaMetadata(actualTypeArguments[0]);
                         String typeName = itemType.getName() + vinePrompter.space() + SchemaFieldType.ARRAY;
                         return new TypeSchemaMetadata(typeName, itemType.getTypes());
                     }
                 } else if (Map.class.isAssignableFrom(rowType)) {
                     if (actualTypeArguments.length > 1) {
-                        TypeSchemaMetadata keyType = getSchemaMetadata(actualTypeArguments[0]);
-                        TypeSchemaMetadata valueType = getSchemaMetadata(actualTypeArguments[1]);
+                        TypeSchemaMetadata keyType = getOrBuildTypeSchemaMetadata(actualTypeArguments[0]);
+                        TypeSchemaMetadata valueType = getOrBuildTypeSchemaMetadata(actualTypeArguments[1]);
                         List<Type> typeList = new ArrayList<>();
                         typeList.addAll(keyType.getTypes());
                         typeList.addAll(valueType.getTypes());
@@ -160,32 +164,24 @@ public class SchemaContext {
                 }
                 return new TypeSchemaMetadata(typeName, type);
             } else if (clazz.isArray()) {
-                TypeSchemaMetadata itemType = getSchemaMetadata(clazz.getComponentType());
+                TypeSchemaMetadata itemType = getOrBuildTypeSchemaMetadata(clazz.getComponentType());
                 String typeName = itemType.getName() + vinePrompter.space() + SchemaFieldType.ARRAY;
                 return new TypeSchemaMetadata(typeName, itemType.getTypes());
             } else {
-                return getSchemaMetadataByClass(clazz);
+                return buildTypeSchemaMetadataByClass(clazz);
             }
         }
         throw new IllegalArgumentException("Unsupported type: " + type.getTypeName());
     }
 
-    public String buildSystemPrompt(Method method, String systemPromptPrefix, String actionMission, SerializationType serializationType, Class<? extends VineFunctionExample>[] exampleClasses) {
-        StringBuilder systemPrompt = new StringBuilder(systemPromptPrefix);
-        if (!systemPromptPrefix.isEmpty()) {
-            systemPrompt.append(vinePrompter.newLine(2));
-        }
-        systemPrompt.append(vinePrompter.header(2)).append(vinePrompter.missionTitle()).append(vinePrompter.newLine()).append(actionMission).append(vinePrompter.newLine(2));
+    public String buildSchemaPrompt(Method method, SerializationType serializationType, Class<? extends VineFunctionExample>[] exampleClasses) {
         if (method.getGenericReturnType() == Void.TYPE) {
             throw new IllegalArgumentException("The chat action method " + method.getDeclaringClass().getCanonicalName() + "." + method.getName() + " cannot return void");
         }
-        String schema = buildSchemaPrompt(method.getGenericReturnType(), serializationType);
-        if (StringUtils.hasLength(schema)) {
-            if (!systemPrompt.isEmpty()) {
-                systemPrompt.append(vinePrompter.newLine(2));
-            }
-            systemPrompt.append(schema);
-        }
+        String schema = buildTypeSchemaPrompt(method.getGenericReturnType(), serializationType);
+        StringBuilder schemaPrompt = new StringBuilder(schema);
+        schemaPrompt.append(vinePrompter.newLine(2));
+
         if (exampleClasses != null && exampleClasses.length > 0) {
             StringBuilder examplePrompt = new StringBuilder(vinePrompter.newLine(2));
             List<String> parameterNames = Arrays.stream(method.getParameters()).map(Parameter::getName).toList();
@@ -219,13 +215,42 @@ public class SchemaContext {
                 }
             }
             if (!examplePrompt.isEmpty()) {
-                systemPrompt.append(examplePrompt);
+                schemaPrompt.append(examplePrompt);
             }
         }
-        return systemPrompt.toString();
+        return schemaPrompt.toString();
     }
 
-    public String buildUserMessage(VineFunctionMetadata vineFunctionMetadata, Map<String, Object> parameters) {
+    public ChatMessage buildSystemMessageWithThought(VineFunctionMetadata vineFunctionMetadata) {
+        StringBuilder systemPrompt = new StringBuilder(vineFunctionMetadata.systemPrompt());
+        if (!systemPrompt.isEmpty()) {
+            systemPrompt.append(vinePrompter.newLine(2));
+        }
+        systemPrompt.append(vinePrompter.thoughtPrompt());
+        systemPrompt.append(vinePrompter.newLine(2));
+        systemPrompt.append(vinePrompter.header(2)).append(vinePrompter.missionTitle());
+        systemPrompt.append(vinePrompter.newLine());
+        systemPrompt.append(vineFunctionMetadata.missionObjective());
+        systemPrompt.append(vinePrompter.newLine(2));
+        systemPrompt.append(vinePrompter.newLine(2));
+        return ChatMessage.systemMessage(systemPrompt.toString());
+    }
+
+    public ChatMessage buildSystemMessageWithSchema(VineFunctionMetadata vineFunctionMetadata) {
+        StringBuilder systemPrompt = new StringBuilder(vineFunctionMetadata.systemPrompt());
+        if (!systemPrompt.isEmpty()) {
+            systemPrompt.append(vinePrompter.newLine(2));
+        }
+        systemPrompt.append(vinePrompter.header(2)).append(vinePrompter.missionTitle());
+        systemPrompt.append(vinePrompter.newLine());
+        systemPrompt.append(vineFunctionMetadata.missionObjective());
+        systemPrompt.append(vinePrompter.newLine(2));
+        systemPrompt.append(vineFunctionMetadata.schemaPrompt());
+        systemPrompt.append(vinePrompter.newLine(2));
+        return ChatMessage.systemMessage(systemPrompt.toString());
+    }
+
+    public ChatMessage buildUserMessage(VineFunctionMetadata vineFunctionMetadata, Map<String, Object> parameters) {
         StringBuilder userMessage = new StringBuilder(vineFunctionMetadata.userPrompt());
         if (parameters != null && !parameters.isEmpty()) {
             String parametersPrompt = parameters.entrySet().stream().map(entry -> buildParameterPrompt(entry.getKey(), entry.getValue(), vineFunctionMetadata.serializationType())).collect(Collectors.joining(vinePrompter.newLine()));
@@ -237,7 +262,13 @@ public class SchemaContext {
                 userMessage.append(parametersPrompt);
             }
         }
-        return userMessage.toString();
+        return ChatMessage.userMessage(userMessage.toString());
+    }
+
+    public ChatMessage buildResultMessage(VineFunctionMetadata vineFunctionMetadata) {
+        String resultMessage = vineFunctionMetadata.schemaPrompt() + vinePrompter.newLine(2) +
+                vinePrompter.header(2, vinePrompter.finalResultTitle());
+        return ChatMessage.userMessage(resultMessage);
     }
 
     private String buildParameterPrompt(String name, Object value, SerializationType serializationType) {
@@ -261,13 +292,14 @@ public class SchemaContext {
             return switch (serializationType) {
                 case Yaml -> YamlUtils.toYaml(obj);
                 case Json -> JsonUtils.toJson(obj);
+                default -> throw new IllegalStateException("Unexpected value: " + serializationType);
             };
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private TypeSchemaMetadata getSchemaMetadataByClass(Class<?> clazz) {
+    private TypeSchemaMetadata buildTypeSchemaMetadataByClass(Class<?> clazz) {
         if (Temporal.class.isAssignableFrom(clazz)) {
             return new TypeSchemaMetadata(SchemaFieldType.DATE, clazz);
         }
@@ -319,7 +351,7 @@ public class SchemaContext {
     }
 
     private FieldSchemaMetadata getFieldSchemaMetadata(Field field) {
-        TypeSchemaMetadata typeSchemaMetadata = getSchemaMetadata(field.getGenericType());
+        TypeSchemaMetadata typeSchemaMetadata = getOrBuildTypeSchemaMetadata(field.getGenericType());
         return new FieldSchemaMetadata(field, typeSchemaMetadata);
     }
 }

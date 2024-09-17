@@ -41,10 +41,12 @@ public class SingletonConfiguration {
                 DEFAULT_EXAMPLE_TITLE,
                 DEFAULT_EXAMPLE_PARAMETERS_TITLE,
                 DEFAULT_EXAMPLE_RETURN_TITLE,
-                DEFAULT_SCHEMA_TITLE,
+                DEFAULT_SCHEMAS_TITLE,
                 DEFAULT_RETURN_SCHEMA_TITLE,
+                DEFAULT_FINAL_RESULT_TITLE,
                 DEFAULT_RETURN_JSON_FORMAT,
-                DEFAULT_RETURN_YAML_FORMAT
+                DEFAULT_RETURN_YAML_FORMAT,
+                DEFAULT_THOUGHT_PROMPT
         );
         VinePrompter vinePrompter = new VinePrompter(vinePromptConfig);
         return new SchemaContext(vinePrompter);

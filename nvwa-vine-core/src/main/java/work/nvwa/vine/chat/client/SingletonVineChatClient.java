@@ -46,6 +46,13 @@ public class SingletonVineChatClient implements VineChatClient {
         }
     }
 
+    @Override
+    public ChatMessage callMessage(List<ChatMessage> messages, VineFunctionMetadata vineFunctionMetadata) {
+        Message[] messageArray = messages.stream().map(MessageUtils::convert).toArray(Message[]::new);
+        String assistantMessageText = chatModel.call(messageArray);
+        return ChatMessage.assistantMessage(assistantMessageText);
+    }
+
     private <T> T convert(String assistantMessageText, VineFunctionMetadata vineFunctionMetadata) throws JsonProcessingException {
         if (vineFunctionMetadata.serializationType() == SerializationType.Yaml) {
             return (T) YamlUtils.fromYamlWithoutEnclosure(assistantMessageText, vineFunctionMetadata.returnTypeRef());

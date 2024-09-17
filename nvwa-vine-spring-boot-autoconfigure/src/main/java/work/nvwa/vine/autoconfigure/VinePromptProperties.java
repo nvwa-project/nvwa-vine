@@ -22,10 +22,12 @@ public class VinePromptProperties {
     private String exampleTitle = DEFAULT_EXAMPLE_TITLE;
     private String exampleParametersTitle = DEFAULT_EXAMPLE_PARAMETERS_TITLE;
     private String exampleReturnTitle = DEFAULT_EXAMPLE_RETURN_TITLE;
-    private String schemaTitle = DEFAULT_SCHEMA_TITLE;
+    private String schemasTitle = DEFAULT_SCHEMAS_TITLE;
     private String returnSchemaTitle = DEFAULT_RETURN_SCHEMA_TITLE;
+    private String finalResultTitle = DEFAULT_FINAL_RESULT_TITLE;
     private String returnJsonFormat = DEFAULT_RETURN_JSON_FORMAT;
     private String returnYamlFormat = DEFAULT_RETURN_YAML_FORMAT;
+    private String thoughtPrompt = DEFAULT_THOUGHT_PROMPT;
 
     public String getNewLine() {
         return newLine;
@@ -131,12 +133,12 @@ public class VinePromptProperties {
         this.exampleReturnTitle = exampleReturnTitle;
     }
 
-    public String getSchemaTitle() {
-        return schemaTitle;
+    public String getSchemasTitle() {
+        return schemasTitle;
     }
 
-    public void setSchemaTitle(String schemaTitle) {
-        this.schemaTitle = schemaTitle;
+    public void setSchemasTitle(String schemasTitle) {
+        this.schemasTitle = schemasTitle;
     }
 
     public String getReturnSchemaTitle() {
@@ -145,6 +147,14 @@ public class VinePromptProperties {
 
     public void setReturnSchemaTitle(String returnSchemaTitle) {
         this.returnSchemaTitle = returnSchemaTitle;
+    }
+
+    public String getFinalResultTitle() {
+        return finalResultTitle;
+    }
+
+    public void setFinalResultTitle(String finalResultTitle) {
+        this.finalResultTitle = finalResultTitle;
     }
 
     public String getReturnJsonFormat() {
@@ -161,5 +171,13 @@ public class VinePromptProperties {
 
     public void setReturnYamlFormat(String returnYamlFormat) {
         this.returnYamlFormat = returnYamlFormat;
+    }
+
+    public String getThoughtPrompt() {
+        return thoughtPrompt;
+    }
+
+    public void setThoughtPrompt(String thoughtPrompt) {
+        this.thoughtPrompt = thoughtPrompt;
     }
 }

@@ -17,9 +17,11 @@ public record VinePromptConfig(
         String exampleTitle,
         String exampleParametersTitle,
         String exampleReturnTitle,
-        String schemaTitle,
+        String schemasTitle,
         String returnSchemaTitle,
+        String finalResultTitle,
         String returnJsonFormat,
-        String returnYamlFormat
+        String returnYamlFormat,
+        String thoughtPrompt
 ) {
 }

@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface VineChatClient {
     <T> T call(List<ChatMessage> messages, VineFunctionMetadata vineFunctionMetadata);
+    ChatMessage callMessage(List<ChatMessage> messages, VineFunctionMetadata vineFunctionMetadata);
 }

@@ -50,6 +50,13 @@ public @interface VineFunction {
     String clientLevel() default "";
 
     /**
+     * Whether to enable thought mode, if thought mode is enabled, the large model will be guided to think before answering questions, which will improve the quality of the answers
+     *
+     * @return enable thought
+     */
+    boolean enableThought() default false;
+
+    /**
      * The maximum number of tokens to generate
      * Default is -1, which means no limit.
      *
@@ -58,12 +65,14 @@ public @interface VineFunction {
     int maxTokens() default -1;
 
     /**
-     * The action parameters and return value serialization type.
-     * default use yaml format, support json format
+     * The action parameters and return value serialization type
+     * use the default value in the global configuration or the annotation {@link VineService} parameter serializationType
+     * if not use the default value, which will override
+     * Supports json, yaml format
      *
      * @return serialization type
      */
-    SerializationType serializationType() default SerializationType.Yaml;
+    SerializationType serializationType() default SerializationType.Default;
 
     /**
      * The action few-shot learning examples. which will be set to the system message prompt

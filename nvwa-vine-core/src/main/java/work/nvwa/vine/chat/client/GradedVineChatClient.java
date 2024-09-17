@@ -27,4 +27,10 @@ public class GradedVineChatClient implements VineChatClient {
         SingletonVineChatClient chatClient = gradedClientMap.get(vineFunctionMetadata.clientLevel()).next();
         return chatClient.call(messages, vineFunctionMetadata);
     }
+
+    @Override
+    public ChatMessage callMessage(List<ChatMessage> messages, VineFunctionMetadata vineFunctionMetadata) {
+        SingletonVineChatClient chatClient = gradedClientMap.get(vineFunctionMetadata.clientLevel()).next();
+        return chatClient.callMessage(messages, vineFunctionMetadata);
+    }
 }

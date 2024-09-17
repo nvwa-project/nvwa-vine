@@ -1,6 +1,8 @@
 package work.nvwa.vine.annotation;
 
 
+import work.nvwa.vine.SerializationType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,4 +37,13 @@ public @interface VineService {
      * @return client level
      */
     String clientLevel() default "";
+
+    /**
+     * The action parameters and return value serialization type.
+     * If not set, use the default value in the global configuration
+     * Supports json, yaml format
+     *
+     * @return serialization type
+     */
+    SerializationType serializationType() default SerializationType.Default;
 }

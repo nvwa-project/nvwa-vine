@@ -83,12 +83,16 @@ public final class VinePrompter {
         return config.exampleReturnTitle();
     }
 
-    public String schemaTitle() {
-        return config.schemaTitle();
+    public String schemasTitle() {
+        return config.schemasTitle();
     }
 
     public String returnSchemaTitle() {
         return config.returnSchemaTitle();
+    }
+
+    public String finalResultTitle() {
+        return config.finalResultTitle();
     }
 
     public String returnJsonFormat() {
@@ -97,5 +101,9 @@ public final class VinePrompter {
 
     public String returnYamlFormat() {
         return config.returnYamlFormat();
+    }
+
+    public String thoughtPrompt() {
+        return config.thoughtPrompt();
     }
 }

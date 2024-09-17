@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import work.nvwa.vine.SerializationType;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.providers.GradedChatClientProviderBuilder;
 import work.nvwa.vine.autoconfigure.providers.deepseek.DeepseekChatClientProvider;
@@ -19,6 +20,8 @@ import work.nvwa.vine.chat.client.GradedVineChatClient;
 import work.nvwa.vine.chat.client.SingletonVineChatClient;
 import work.nvwa.vine.chat.client.VineChatClient;
 import work.nvwa.vine.config.EnableVine;
+import work.nvwa.vine.config.VineConfig;
+import work.nvwa.vine.context.InvocationContext;
 import work.nvwa.vine.context.SchemaContext;
 import work.nvwa.vine.prompt.VinePromptConfig;
 import work.nvwa.vine.prompt.VinePrompter;
@@ -87,7 +90,7 @@ public class VineConfiguration {
     }
 
     @Bean
-    public SchemaContext schemaContext(VineProperties vineProperties) {
+    public VineConfig vineConfig(VineProperties vineProperties) {
         VinePromptProperties vinePromptProperties = vineProperties.getPrompt();
         if (vinePromptProperties == null) {
             vinePromptProperties = new VinePromptProperties();
@@ -106,12 +109,28 @@ public class VineConfiguration {
                 vinePromptProperties.getExampleTitle(),
                 vinePromptProperties.getExampleParametersTitle(),
                 vinePromptProperties.getExampleReturnTitle(),
-                vinePromptProperties.getSchemaTitle(),
+                vinePromptProperties.getSchemasTitle(),
                 vinePromptProperties.getReturnSchemaTitle(),
+                vinePromptProperties.getFinalResultTitle(),
                 vinePromptProperties.getReturnJsonFormat(),
-                vinePromptProperties.getReturnYamlFormat()
+                vinePromptProperties.getReturnYamlFormat(),
+                vinePromptProperties.getThoughtPrompt()
         );
-        VinePrompter vinePrompter = new VinePrompter(vinePromptConfig);
+        SerializationType defaultSerializationType = vineProperties.getDefaultSerializationType();
+        if (defaultSerializationType == null) {
+            defaultSerializationType = SerializationType.Yaml;
+        }
+        return new VineConfig(vinePromptConfig, defaultSerializationType);
+    }
+
+    @Bean
+    public SchemaContext schemaContext(VineConfig vineConfig) {
+        VinePrompter vinePrompter = new VinePrompter(vineConfig.promptConfig());
         return new SchemaContext(vinePrompter);
+    }
+
+    @Bean
+    public InvocationContext invocationContext(VineConfig vineConfig, VineChatClient chatClient, SchemaContext schemaContext) {
+        return new InvocationContext(vineConfig, chatClient, schemaContext);
     }
 }

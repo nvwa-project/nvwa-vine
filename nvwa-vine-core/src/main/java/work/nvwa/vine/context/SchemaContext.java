@@ -3,6 +3,8 @@ package work.nvwa.vine.context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import work.nvwa.vine.CustomizedPromptObject;
+import work.nvwa.vine.CustomizedPromptString;
 import work.nvwa.vine.ExampleCase;
 import work.nvwa.vine.SchemaFieldType;
 import work.nvwa.vine.SerializationType;
@@ -14,7 +16,6 @@ import work.nvwa.vine.chat.ChatMessage;
 import work.nvwa.vine.metadata.FieldSchemaMetadata;
 import work.nvwa.vine.metadata.TypeSchemaMetadata;
 import work.nvwa.vine.metadata.VineFunctionMetadata;
-import work.nvwa.vine.prompt.CustomizedPrompt;
 import work.nvwa.vine.prompt.VinePrompter;
 import work.nvwa.vine.util.JsonUtils;
 import work.nvwa.vine.util.YamlUtils;
@@ -37,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -285,8 +287,29 @@ public class SchemaContext {
         if (obj instanceof String) {
             return (String) obj;
         }
-        if (obj instanceof CustomizedPrompt) {
-            return ((CustomizedPrompt) obj).getObjectPrompt();
+        if (obj instanceof CustomizedPromptString) {
+            return ((CustomizedPromptString) obj).getPromptString();
+        }
+        if (obj instanceof CustomizedPromptObject) {
+            return buildObjectPrompt(serializationType, ((CustomizedPromptObject) obj).getPromptObject());
+        }
+        Stream<?> stream = null;
+        if (obj instanceof Collection<?>) {
+            stream = ((Collection<?>) obj).stream();
+        }
+        if (obj.getClass().isArray()) {
+            stream = Arrays.stream((Object[]) obj);
+        }
+        if (stream != null) {
+            obj = stream.map(item -> {
+                if (item instanceof CustomizedPromptString) {
+                    return ((CustomizedPromptString) item).getPromptString();
+                }
+                if (item instanceof CustomizedPromptObject) {
+                    return ((CustomizedPromptObject) item).getPromptObject();
+                }
+                return item;
+            }).toList();
         }
         try {
             return switch (serializationType) {

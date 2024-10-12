@@ -19,6 +19,8 @@ import work.nvwa.vine.autoconfigure.providers.zhipu.ZhiPuChatClientProvider;
 import work.nvwa.vine.chat.client.GradedVineChatClient;
 import work.nvwa.vine.chat.client.SingletonVineChatClient;
 import work.nvwa.vine.chat.client.VineChatClient;
+import work.nvwa.vine.chat.observation.DefaultVineChatLogger;
+import work.nvwa.vine.chat.observation.VineChatLogger;
 import work.nvwa.vine.config.EnableVine;
 import work.nvwa.vine.config.VineConfig;
 import work.nvwa.vine.context.InvocationContext;
@@ -76,16 +78,22 @@ public class VineConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(VineChatLogger.class)
+    public VineChatLogger vineChatLogger() {
+        return new DefaultVineChatLogger();
+    }
+
+    @Bean
     @ConditionalOnBean(ChatModel.class)
-    public VineChatClient singletonVineChatClient(ChatModel chatModel) {
-        return new SingletonVineChatClient(chatModel);
+    public VineChatClient singletonVineChatClient(ChatModel chatModel, VineChatLogger vineChatLogger) {
+        return new SingletonVineChatClient(chatModel, vineChatLogger);
     }
 
     @Bean
     @ConditionalOnMissingBean(ChatModel.class)
-    public VineChatClient gradedVineChatClient(List<ChatClientProvider> providers, VineProperties vineProperties) {
+    public VineChatClient gradedVineChatClient(List<ChatClientProvider> providers, VineProperties vineProperties, VineChatLogger vineChatLogger) {
         GradedChatClientProviderBuilder gradedChatClientProviderBuilder = new GradedChatClientProviderBuilder();
-        Map<String, List<SingletonVineChatClient>> gradedClientsMap = gradedChatClientProviderBuilder.buildGradedChatClients(providers, vineProperties.getClients());
+        Map<String, List<SingletonVineChatClient>> gradedClientsMap = gradedChatClientProviderBuilder.buildGradedChatClients(providers, vineProperties.getClients(), vineChatLogger);
         return new GradedVineChatClient(gradedClientsMap);
     }
 

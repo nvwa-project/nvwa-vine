@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.utils.SpringPropertiesUtils;
 import work.nvwa.vine.chat.client.SingletonVineChatClient;
+import work.nvwa.vine.chat.observation.VineChatLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class QianFanChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(QianFanChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties) {
+    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
         return chatClientProperties.stream().map(clientConfigMap -> {
             QianFanChatModelProperties clientProperties = new QianFanChatModelProperties();
             try {
@@ -48,7 +49,7 @@ public class QianFanChatClientProvider implements ChatClientProvider {
                     chatModel = new QianFanChatModel(qianFanApi, options);
                 }
 
-                return new SingletonVineChatClient(chatModel);
+                return new SingletonVineChatClient(chatModel, vineChatLogger);
             } catch (IllegalAccessException | InvocationTargetException ignored) {
                 logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
             }

@@ -12,6 +12,7 @@ import work.nvwa.vine.autoconfigure.CommonChatModelProperties;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.utils.SpringPropertiesUtils;
 import work.nvwa.vine.chat.client.SingletonVineChatClient;
+import work.nvwa.vine.chat.observation.VineChatLogger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class ZhiPuChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(ZhiPuChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties) {
+    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
         return chatClientProperties.stream().map(clientConfigMap -> {
             CommonChatModelProperties clientProperties = new CommonChatModelProperties();
             try {
@@ -48,7 +49,7 @@ public class ZhiPuChatClientProvider implements ChatClientProvider {
                     SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
                     chatModel = new ZhiPuAiChatModel(springApi, options);
                 }
-                return new SingletonVineChatClient(chatModel);
+                return new SingletonVineChatClient(chatModel, vineChatLogger);
             } catch (IllegalAccessException | InvocationTargetException ignored) {
                 logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
             }

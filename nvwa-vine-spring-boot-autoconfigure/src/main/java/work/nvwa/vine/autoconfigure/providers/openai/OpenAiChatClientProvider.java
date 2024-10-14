@@ -11,14 +11,9 @@ import org.springframework.util.StringUtils;
 import work.nvwa.vine.autoconfigure.CommonChatModelProperties;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.utils.SpringPropertiesUtils;
-import work.nvwa.vine.chat.client.SingletonVineChatClient;
-import work.nvwa.vine.chat.observation.VineChatLogger;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 
 /**
@@ -29,32 +24,28 @@ public class OpenAiChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(OpenAiChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
-        return chatClientProperties.stream().map(clientConfigMap -> {
-            CommonChatModelProperties clientProperties = new CommonChatModelProperties();
-            try {
-                SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
-                OpenAiApi springApi;
-                if (StringUtils.hasText(clientProperties.getBaseUrl())) {
-                    springApi = new OpenAiApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
-                } else {
-                    springApi = new OpenAiApi(clientProperties.getApiKey());
-                }
-
-                ChatModel chatModel;
-                if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
-                    chatModel = new OpenAiChatModel(springApi);
-                } else {
-                    OpenAiChatOptions options = new OpenAiChatOptions();
-                    SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
-                    chatModel = new OpenAiChatModel(springApi, options);
-                }
-                return new SingletonVineChatClient(chatModel, vineChatLogger);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
-                logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+    public ChatModel buildChatModel(Map<String, Object> clientConfigMap) {
+        CommonChatModelProperties clientProperties = new CommonChatModelProperties();
+        try {
+            SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
+            OpenAiApi springApi;
+            if (StringUtils.hasText(clientProperties.getBaseUrl())) {
+                springApi = new OpenAiApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
+            } else {
+                springApi = new OpenAiApi(clientProperties.getApiKey());
             }
-            return null;
-        }).filter(Objects::nonNull);
+
+            if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
+                return new OpenAiChatModel(springApi);
+            }
+
+            OpenAiChatOptions options = new OpenAiChatOptions();
+            SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
+            return new OpenAiChatModel(springApi, options);
+        } catch (IllegalAccessException | InvocationTargetException ignored) {
+            logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+        }
+        return null;
     }
 
     @Override

@@ -11,14 +11,9 @@ import org.springframework.util.StringUtils;
 import work.nvwa.vine.autoconfigure.CommonChatModelProperties;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.utils.SpringPropertiesUtils;
-import work.nvwa.vine.chat.client.SingletonVineChatClient;
-import work.nvwa.vine.chat.observation.VineChatLogger;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import static work.nvwa.vine.autoconfigure.providers.deepseek.DeepseekConstants.*;
 
@@ -31,37 +26,33 @@ public class DeepseekChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(DeepseekChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
-        return chatClientProperties.stream().map(clientConfigMap -> {
-            CommonChatModelProperties clientProperties = new CommonChatModelProperties();
-            try {
-                SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
+    public ChatModel buildChatModel(Map<String, Object> clientConfigMap) {
+        CommonChatModelProperties clientProperties = new CommonChatModelProperties();
+        try {
+            SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
 
-                OpenAiApi springApi;
-                if (StringUtils.hasText(clientProperties.getBaseUrl())) {
-                    springApi = new OpenAiApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
-                } else {
-                    springApi = new OpenAiApi(BASE_URL, clientProperties.getApiKey());
-                }
-
-                ChatModel chatModel;
-                if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
-                    OpenAiChatOptions options = OpenAiChatOptions.builder().withModel(DEFAULT_CHAT_MODEL).withTemperature(DEFAULT_TEMPERATURE).build();
-                    chatModel = new OpenAiChatModel(springApi, options);
-                } else {
-                    OpenAiChatOptions options = new OpenAiChatOptions();
-                    SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
-                    if (options.getModel() == null) {
-                        options.setModel(DEFAULT_CHAT_MODEL);
-                    }
-                    chatModel = new OpenAiChatModel(springApi, options);
-                }
-                return new SingletonVineChatClient(chatModel, vineChatLogger);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
-                logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+            OpenAiApi springApi;
+            if (StringUtils.hasText(clientProperties.getBaseUrl())) {
+                springApi = new OpenAiApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
+            } else {
+                springApi = new OpenAiApi(BASE_URL, clientProperties.getApiKey());
             }
-            return null;
-        }).filter(Objects::nonNull);
+
+            if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
+                OpenAiChatOptions options = OpenAiChatOptions.builder().withModel(DEFAULT_CHAT_MODEL).withTemperature(DEFAULT_TEMPERATURE).build();
+                return new OpenAiChatModel(springApi, options);
+            }
+
+            OpenAiChatOptions options = new OpenAiChatOptions();
+            SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
+            if (options.getModel() == null) {
+                options.setModel(DEFAULT_CHAT_MODEL);
+            }
+            return new OpenAiChatModel(springApi, options);
+        } catch (IllegalAccessException | InvocationTargetException ignored) {
+            logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+        }
+        return null;
     }
 
     @Override

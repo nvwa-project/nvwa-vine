@@ -29,32 +29,28 @@ public class MiniMaxChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(MiniMaxChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
-        return chatClientProperties.stream().map(clientConfigMap -> {
-            CommonChatModelProperties clientProperties = new CommonChatModelProperties();
-            try {
-                SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
-                MiniMaxApi springApi;
-                if (StringUtils.hasText(clientProperties.getBaseUrl())) {
-                    springApi = new MiniMaxApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
-                } else {
-                    springApi = new MiniMaxApi(clientProperties.getApiKey());
-                }
-
-                ChatModel chatModel;
-                if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
-                    chatModel = new MiniMaxChatModel(springApi);
-                } else {
-                    MiniMaxChatOptions options = new MiniMaxChatOptions();
-                    SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
-                    chatModel = new MiniMaxChatModel(springApi, options);
-                }
-                return new SingletonVineChatClient(chatModel, vineChatLogger);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
-                logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+    public ChatModel buildChatModel(Map<String, Object> clientConfigMap) {
+        CommonChatModelProperties clientProperties = new CommonChatModelProperties();
+        try {
+            SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
+            MiniMaxApi springApi;
+            if (StringUtils.hasText(clientProperties.getBaseUrl())) {
+                springApi = new MiniMaxApi(clientProperties.getBaseUrl(), clientProperties.getApiKey());
+            } else {
+                springApi = new MiniMaxApi(clientProperties.getApiKey());
             }
-            return null;
-        }).filter(Objects::nonNull);
+
+            if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
+                return new MiniMaxChatModel(springApi);
+            }
+
+            MiniMaxChatOptions options = new MiniMaxChatOptions();
+            SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
+            return new MiniMaxChatModel(springApi, options);
+        } catch (IllegalAccessException | InvocationTargetException ignored) {
+            logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+        }
+        return null;
     }
 
     @Override

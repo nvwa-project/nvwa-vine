@@ -17,6 +17,7 @@ public class VineProperties {
 
     private VinePromptProperties prompt;
     private SerializationType defaultSerializationType;
+    private ChatRetryProperties retry;
     private Map<String, Map<String, List<Map<String, Object>>>> clients;
 
     public VinePromptProperties getPrompt() {
@@ -33,6 +34,14 @@ public class VineProperties {
 
     public void setDefaultSerializationType(SerializationType defaultSerializationType) {
         this.defaultSerializationType = defaultSerializationType;
+    }
+
+    public ChatRetryProperties getRetry() {
+        return retry;
+    }
+
+    public void setRetry(ChatRetryProperties retry) {
+        this.retry = retry;
     }
 
     public Map<String, Map<String, List<Map<String, Object>>>> getClients() {

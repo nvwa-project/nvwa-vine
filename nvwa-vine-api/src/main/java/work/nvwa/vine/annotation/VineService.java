@@ -39,6 +39,14 @@ public @interface VineService {
     String clientLevel() default "";
 
     /**
+     * The maximum number of retries when the chat model call fails.
+     * The default value is -1, which means using the global configuration.
+     *
+     * @return maximum number of retries
+     */
+    int maxRetryAttempts() default -1;
+
+    /**
      * The action parameters and return value serialization type.
      * If not set, use the default value in the global configuration
      * Supports json, yaml format

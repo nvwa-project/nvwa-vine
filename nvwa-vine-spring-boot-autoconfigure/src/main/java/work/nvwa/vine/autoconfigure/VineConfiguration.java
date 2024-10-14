@@ -27,6 +27,7 @@ import work.nvwa.vine.context.InvocationContext;
 import work.nvwa.vine.context.SchemaContext;
 import work.nvwa.vine.prompt.VinePromptConfig;
 import work.nvwa.vine.prompt.VinePrompter;
+import work.nvwa.vine.retry.RetryConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -85,15 +86,15 @@ public class VineConfiguration {
 
     @Bean
     @ConditionalOnBean(ChatModel.class)
-    public VineChatClient singletonVineChatClient(ChatModel chatModel, VineChatLogger vineChatLogger) {
-        return new SingletonVineChatClient(chatModel, vineChatLogger);
+    public VineChatClient singletonVineChatClient(ChatModel chatModel, VineConfig vineConfig, VineChatLogger vineChatLogger) {
+        return new SingletonVineChatClient(chatModel, vineChatLogger, vineConfig);
     }
 
     @Bean
     @ConditionalOnMissingBean(ChatModel.class)
-    public VineChatClient gradedVineChatClient(List<ChatClientProvider> providers, VineProperties vineProperties, VineChatLogger vineChatLogger) {
+    public VineChatClient gradedVineChatClient(List<ChatClientProvider> providers, VineProperties vineProperties, VineConfig vineConfig, VineChatLogger vineChatLogger) {
         GradedChatClientProviderBuilder gradedChatClientProviderBuilder = new GradedChatClientProviderBuilder();
-        Map<String, List<SingletonVineChatClient>> gradedClientsMap = gradedChatClientProviderBuilder.buildGradedChatClients(providers, vineProperties.getClients(), vineChatLogger);
+        Map<String, List<SingletonVineChatClient>> gradedClientsMap = gradedChatClientProviderBuilder.buildGradedChatClients(providers, vineProperties.getClients(), vineChatLogger, vineConfig);
         return new GradedVineChatClient(gradedClientsMap);
     }
 
@@ -128,7 +129,11 @@ public class VineConfiguration {
         if (defaultSerializationType == null) {
             defaultSerializationType = SerializationType.Yaml;
         }
-        return new VineConfig(vinePromptConfig, defaultSerializationType);
+        if (vineProperties.getRetry() == null) {
+            vineProperties.setRetry(new ChatRetryProperties());
+        }
+        RetryConfig retryConfig = new RetryConfig(vineProperties.getRetry().getMaxAttempts());
+        return new VineConfig(vinePromptConfig, retryConfig, defaultSerializationType);
     }
 
     @Bean
@@ -141,4 +146,5 @@ public class VineConfiguration {
     public InvocationContext invocationContext(VineConfig vineConfig, VineChatClient chatClient, SchemaContext schemaContext) {
         return new InvocationContext(vineConfig, chatClient, schemaContext);
     }
+
 }

@@ -18,10 +18,11 @@ public record VineFunctionMetadata(
         String clientLevel,
         Boolean enableThought,
         SerializationType serializationType,
-        TypeReference<?> returnTypeRef
+        TypeReference<?> returnTypeRef,
+        Integer maxRetryAttempts
 ) {
     public VineFunctionMetadata(String userPrompt, String systemPrompt, String schemaPrompt, String missionObjective, String clientLevel,
-                                Boolean enableThought, SerializationType serializationType, TypeReference<?> returnTypeRef) {
+                                Boolean enableThought, SerializationType serializationType, TypeReference<?> returnTypeRef, Integer maxRetryAttempts) {
         this.userPrompt = userPrompt;
         this.systemPrompt = systemPrompt;
         this.schemaPrompt = schemaPrompt;
@@ -34,5 +35,6 @@ public record VineFunctionMetadata(
         }
         this.serializationType = serializationType;
         this.returnTypeRef = returnTypeRef;
+        this.maxRetryAttempts = maxRetryAttempts;
     }
 }

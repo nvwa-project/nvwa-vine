@@ -10,14 +10,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import work.nvwa.vine.autoconfigure.providers.ChatClientProvider;
 import work.nvwa.vine.autoconfigure.utils.SpringPropertiesUtils;
-import work.nvwa.vine.chat.client.SingletonVineChatClient;
-import work.nvwa.vine.chat.observation.VineChatLogger;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 
 /**
@@ -28,33 +23,28 @@ public class QianFanChatClientProvider implements ChatClientProvider {
     private final Logger logger = LoggerFactory.getLogger(QianFanChatClientProvider.class);
 
     @Override
-    public Stream<SingletonVineChatClient> buildChatModels(Collection<Map<String, Object>> chatClientProperties, VineChatLogger vineChatLogger) {
-        return chatClientProperties.stream().map(clientConfigMap -> {
-            QianFanChatModelProperties clientProperties = new QianFanChatModelProperties();
-            try {
-                SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
-                QianFanApi qianFanApi;
-                if (StringUtils.hasText(clientProperties.getBaseUrl())) {
-                    qianFanApi = new QianFanApi(clientProperties.getBaseUrl(), clientProperties.getApiKey(), clientProperties.getSecretKey());
-                } else {
-                    qianFanApi = new QianFanApi(clientProperties.getApiKey(), clientProperties.getSecretKey());
-                }
-
-                ChatModel chatModel;
-                if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
-                    chatModel = new QianFanChatModel(qianFanApi);
-                } else {
-                    QianFanChatOptions options = new QianFanChatOptions();
-                    SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
-                    chatModel = new QianFanChatModel(qianFanApi, options);
-                }
-
-                return new SingletonVineChatClient(chatModel, vineChatLogger);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
-                logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+    public ChatModel buildChatModel(Map<String, Object> clientConfigMap) {
+        QianFanChatModelProperties clientProperties = new QianFanChatModelProperties();
+        try {
+            SpringPropertiesUtils.copyProperties(clientProperties, clientConfigMap);
+            QianFanApi qianFanApi;
+            if (StringUtils.hasText(clientProperties.getBaseUrl())) {
+                qianFanApi = new QianFanApi(clientProperties.getBaseUrl(), clientProperties.getApiKey(), clientProperties.getSecretKey());
+            } else {
+                qianFanApi = new QianFanApi(clientProperties.getApiKey(), clientProperties.getSecretKey());
             }
-            return null;
-        }).filter(Objects::nonNull);
+
+            if (CollectionUtils.isEmpty(clientProperties.getOptions())) {
+                return new QianFanChatModel(qianFanApi);
+            }
+
+            QianFanChatOptions options = new QianFanChatOptions();
+            SpringPropertiesUtils.copyProperties(options, clientProperties.getOptions());
+            return new QianFanChatModel(qianFanApi, options);
+        } catch (IllegalAccessException | InvocationTargetException ignored) {
+            logger.error("Failed to build [{}] chat model from properties: {}", getProviderName(), clientConfigMap);
+        }
+        return null;
     }
 
     @Override

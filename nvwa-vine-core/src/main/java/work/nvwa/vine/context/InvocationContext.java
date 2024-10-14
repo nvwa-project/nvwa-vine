@@ -46,6 +46,7 @@ public class InvocationContext {
         String mission;
         String schemaPrompt;
         SerializationType serializationType;
+        int maxRetryAttempts = -1;
         boolean enableThought;
         Class<? extends VineFunctionExample>[] examples = null;
         if (vineFunction != null) {
@@ -64,6 +65,7 @@ public class InvocationContext {
             } else {
                 mission = vineFunction.mission();
             }
+            maxRetryAttempts = vineFunction.maxRetryAttempts();
         } else {
             serializationType = vineService.serializationType();
             mission = method.getName();
@@ -72,6 +74,9 @@ public class InvocationContext {
         if (serializationType == SerializationType.Default) {
             serializationType = vineConfig.defaultSerializationType();
         }
+        if(maxRetryAttempts == -1) {
+            maxRetryAttempts = vineService.maxRetryAttempts();
+        }
         TypeReference<?> returnTypeRef = new TypeReference<>() {
             @Override
             public Type getType() {
@@ -79,6 +84,6 @@ public class InvocationContext {
             }
         };
         schemaPrompt = schemaContext.buildSchemaPrompt(method, serializationType, examples);
-        return new VineFunctionMetadata(userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType, returnTypeRef);
+        return new VineFunctionMetadata(userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType, returnTypeRef, maxRetryAttempts);
     }
 }

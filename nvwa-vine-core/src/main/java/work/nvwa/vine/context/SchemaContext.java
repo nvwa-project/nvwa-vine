@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,6 +172,12 @@ public class SchemaContext {
                 return new TypeSchemaMetadata(typeName, itemType.getTypes());
             } else {
                 return buildTypeSchemaMetadataByClass(clazz);
+            }
+        }
+        if (type instanceof WildcardType wildcardType) {
+            Type[] upperBounds = wildcardType.getUpperBounds();
+            if (upperBounds.length > 0) {
+                return getOrBuildTypeSchemaMetadata(upperBounds[0]);
             }
         }
         throw new IllegalArgumentException("Unsupported type: " + type.getTypeName());

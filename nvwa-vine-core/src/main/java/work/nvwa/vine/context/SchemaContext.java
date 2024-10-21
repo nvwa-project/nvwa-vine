@@ -161,7 +161,7 @@ public class SchemaContext {
                     }
                     return null;
                 }).filter(Objects::nonNull).collect(Collectors.joining(vinePrompter.delimiter()));
-                String typeName = SchemaFieldType.ENUM + vinePrompter.delimiter("optional options include " + enumValues);
+                String typeName = SchemaFieldType.ENUM + vinePrompter.delimiter("must be selected from the following options: " + enumValues);
                 if (!enumsDescription.isEmpty()) {
                     typeName += vinePrompter.newLine() + enumsDescription;
                 }

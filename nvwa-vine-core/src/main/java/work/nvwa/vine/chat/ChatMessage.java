@@ -4,7 +4,7 @@ package work.nvwa.vine.chat;
 /**
  * @author Geng Rong
  */
-public record ChatMessage(ChatMessageType type, String content) {
+public record ChatMessage(ChatMessageType role, String content) {
 
     public static ChatMessage systemMessage(String content) {
         return new ChatMessage(ChatMessageType.SYSTEM, content);

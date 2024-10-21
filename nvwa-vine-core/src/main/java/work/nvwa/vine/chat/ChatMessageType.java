@@ -1,5 +1,7 @@
 package work.nvwa.vine.chat;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author Geng Rong
  */
@@ -9,6 +11,7 @@ public enum ChatMessageType {
     SYSTEM("system"),
     TOOL("tool");
 
+    @JsonValue
     private final String value;
 
     private ChatMessageType(String value) {

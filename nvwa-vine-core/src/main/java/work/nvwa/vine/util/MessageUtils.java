@@ -15,11 +15,11 @@ public final class MessageUtils {
     }
 
     public static Message convert(ChatMessage message) {
-        return switch (message.type()) {
+        return switch (message.role()) {
             case SYSTEM -> new SystemMessage(message.content());
             case USER -> new UserMessage(message.content());
             case ASSISTANT -> new AssistantMessage(message.content());
-            default -> throw new IllegalArgumentException("Unsupported message type: " + message.type());
+            default -> throw new IllegalArgumentException("Unsupported message role: " + message.role());
         };
     }
 }

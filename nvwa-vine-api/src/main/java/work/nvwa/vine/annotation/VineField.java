@@ -21,9 +21,9 @@ public @interface VineField {
 
     String defaultValue() default "";
 
-    boolean nullable() default false;
+    boolean required() default true;
+
+    boolean generate() default true;
 
     int order() default 0;
-
-    boolean returnIgnore() default false;
 }

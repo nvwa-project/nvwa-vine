@@ -14,7 +14,7 @@ public class FieldSchemaMetadata {
     private final TypeSchemaMetadata typeSchemaMetadata;
     private final String description;
     private final String defaultValue;
-    private final boolean nullable;
+    private final boolean required;
 
     public FieldSchemaMetadata(Field field, TypeSchemaMetadata typeSchemaMetadata) {
         VineField schemaField = field.getAnnotation(VineField.class);
@@ -23,7 +23,7 @@ public class FieldSchemaMetadata {
         if (schemaField != null) {
             this.description = schemaField.description();
             this.defaultValue = schemaField.defaultValue();
-            this.nullable = schemaField.nullable();
+            this.required = schemaField.required();
             if (SchemaFieldType.AUTO.equals(schemaField.type())) {
                 type = typeSchemaMetadata.getName();
             } else {
@@ -32,7 +32,7 @@ public class FieldSchemaMetadata {
         } else {
             this.description = "";
             this.defaultValue = "";
-            this.nullable = false;
+            this.required = true;
             type = typeSchemaMetadata.getName();
         }
     }
@@ -40,8 +40,8 @@ public class FieldSchemaMetadata {
     public String getSchema() {
         StringBuilder schema = new StringBuilder(name).append(": ");
         schema.append(type);
-        if (nullable) {
-            schema.append(", nullable");
+        if (required) {
+            schema.append(", required field");
         }
         if (!description.isEmpty()) {
             schema.append(", ").append(description).append(". ");

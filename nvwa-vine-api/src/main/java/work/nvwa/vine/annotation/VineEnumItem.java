@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 public @interface VineEnumItem {
     String description() default "";
 
-    boolean returnIgnore() default false;
+    boolean generate() default true;
 }

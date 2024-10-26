@@ -147,7 +147,7 @@ public class SchemaContext {
                             Field enumItemField = clazz.getDeclaredField(enumName);
                             VineEnumItem vineEnumItem = enumItemField.getDeclaredAnnotation(VineEnumItem.class);
                             if (vineEnumItem != null) {
-                                if (vineEnumItem.returnIgnore()) {
+                                if (!vineEnumItem.generate()) {
                                     return null;
                                 }
                                 if (!vineEnumItem.description().isEmpty()) {
@@ -377,7 +377,7 @@ public class SchemaContext {
             return false;
         }
         VineField vineField = field.getDeclaredAnnotation(VineField.class);
-        return vineField == null || !vineField.returnIgnore();
+        return vineField == null || vineField.generate();
     }
 
     private FieldSchemaMetadata getFieldSchemaMetadata(Field field) {

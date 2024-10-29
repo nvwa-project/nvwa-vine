@@ -17,6 +17,8 @@ public class VineProperties {
 
     private VinePromptProperties prompt;
     private SerializationType defaultSerializationType;
+    private Integer maxTokens;
+    private Integer maxContinuation;
     private ChatRetryProperties retry;
     private Map<String, Map<String, List<Map<String, Object>>>> clients;
 
@@ -42,6 +44,22 @@ public class VineProperties {
 
     public void setRetry(ChatRetryProperties retry) {
         this.retry = retry;
+    }
+
+    public Integer getMaxTokens() {
+        return maxTokens;
+    }
+
+    public void setMaxTokens(Integer maxTokens) {
+        this.maxTokens = maxTokens;
+    }
+
+    public Integer getMaxContinuation() {
+        return maxContinuation;
+    }
+
+    public void setMaxContinuation(Integer maxContinuation) {
+        this.maxContinuation = maxContinuation;
     }
 
     public Map<String, Map<String, List<Map<String, Object>>>> getClients() {

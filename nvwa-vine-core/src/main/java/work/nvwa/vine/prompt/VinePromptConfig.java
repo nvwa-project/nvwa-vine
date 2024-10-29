@@ -22,6 +22,7 @@ public record VinePromptConfig(
         String finalResultTitle,
         String returnJsonFormat,
         String returnYamlFormat,
-        String thoughtPrompt
+        String thoughtPrompt,
+        String continueMessage
 ) {
 }

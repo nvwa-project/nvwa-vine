@@ -28,6 +28,7 @@ public class VinePromptProperties {
     private String returnJsonFormat = DEFAULT_RETURN_JSON_FORMAT;
     private String returnYamlFormat = DEFAULT_RETURN_YAML_FORMAT;
     private String thoughtPrompt = DEFAULT_THOUGHT_PROMPT;
+    private String continueMessage = DEFAULT_CONTINUE_MESSAGE;
 
     public String getNewLine() {
         return newLine;
@@ -179,5 +180,13 @@ public class VinePromptProperties {
 
     public void setThoughtPrompt(String thoughtPrompt) {
         this.thoughtPrompt = thoughtPrompt;
+    }
+
+    public String getContinueMessage() {
+        return continueMessage;
+    }
+
+    public void setContinueMessage(String continueMessage) {
+        this.continueMessage = continueMessage;
     }
 }

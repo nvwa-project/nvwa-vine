@@ -6,6 +6,7 @@ package work.nvwa.vine;
 public interface VineConstants {
     String BASIC_CHAT_CLIENT_LEVEL = "basic";
 
+    String FINISH_REASON_LENGTH = "length";
 
     String DEFAULT_NEW_LINE = "\n";
     String DEFAULT_HEADER_SYMBOL = "#";
@@ -27,4 +28,6 @@ public interface VineConstants {
     String DEFAULT_RETURN_YAML_FORMAT = "Only return the YAML format, remove the ```yaml``` enclosure, string value should be quoted and Ensure that any necessary escape characters";
     String DEFAULT_THOUGHT_PROMPT = "Please do not return the final result, you need analyze the user's input parameters and thinking, only return your thoughts and analysis process.\n" +
             "When the user sends the return schema, then return the final result based on the mission objective, input parameters, and your thinking process.";
+
+    String DEFAULT_CONTINUE_MESSAGE = "The previous message wasn't sent completely due to length limitations. Please use your last message as a prefix and continue outputting the remaining content. Only return the continued part, excluding the prefix from the last message.";
 }

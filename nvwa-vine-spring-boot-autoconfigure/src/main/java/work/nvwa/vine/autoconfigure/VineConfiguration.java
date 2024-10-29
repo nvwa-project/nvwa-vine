@@ -123,7 +123,8 @@ public class VineConfiguration {
                 vinePromptProperties.getFinalResultTitle(),
                 vinePromptProperties.getReturnJsonFormat(),
                 vinePromptProperties.getReturnYamlFormat(),
-                vinePromptProperties.getThoughtPrompt()
+                vinePromptProperties.getThoughtPrompt(),
+                vinePromptProperties.getContinueMessage()
         );
         SerializationType defaultSerializationType = vineProperties.getDefaultSerializationType();
         if (defaultSerializationType == null) {
@@ -133,7 +134,7 @@ public class VineConfiguration {
             vineProperties.setRetry(new ChatRetryProperties());
         }
         RetryConfig retryConfig = new RetryConfig(vineProperties.getRetry().getMaxAttempts());
-        return new VineConfig(vinePromptConfig, retryConfig, defaultSerializationType);
+        return new VineConfig(vinePromptConfig, retryConfig, defaultSerializationType, vineProperties.getMaxTokens(), vineProperties.getMaxContinuation());
     }
 
     @Bean

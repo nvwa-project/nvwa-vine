@@ -46,7 +46,8 @@ public class SingletonConfiguration {
                 DEFAULT_FINAL_RESULT_TITLE,
                 DEFAULT_RETURN_JSON_FORMAT,
                 DEFAULT_RETURN_YAML_FORMAT,
-                DEFAULT_THOUGHT_PROMPT
+                DEFAULT_THOUGHT_PROMPT,
+                DEFAULT_CONTINUE_MESSAGE
         );
         VinePrompter vinePrompter = new VinePrompter(vinePromptConfig);
         return new SchemaContext(vinePrompter);

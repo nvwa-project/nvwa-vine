@@ -7,6 +7,8 @@ import work.nvwa.vine.retry.RetryConfig;
 public record VineConfig(
         VinePromptConfig promptConfig,
         RetryConfig retryConfig,
-        SerializationType defaultSerializationType
+        SerializationType defaultSerializationType,
+        Integer maxTokens,
+        Integer maxContinuation
 ) {
 }

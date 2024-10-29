@@ -47,6 +47,24 @@ public @interface VineService {
     int maxRetryAttempts() default -1;
 
     /**
+     * The maximum number of tokens to generate
+     * Default is -1, which means using the global configuration
+     *
+     * @return max tokens limit
+     */
+    int maxTokens() default -1;
+
+    /**
+     * The number of continuations.
+     * when the output length exceeds maxTokens, the model will continue to be called to generate until the output length
+     * is less than or equal to maxTokens or the number of continuations reaches maxContinuation.
+     * Default is -1, which means using the global configuration
+     *
+     * @return max continuation
+     */
+    int maxContinuation() default -1;
+
+    /**
      * The action parameters and return value serialization type.
      * If not set, use the default value in the global configuration
      * Supports json, yaml format

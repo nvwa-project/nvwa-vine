@@ -66,11 +66,21 @@ public @interface VineFunction {
 
     /**
      * The maximum number of tokens to generate
-     * Default is -1, which means no limit.
+     * Default is -1, which means using the annotation {@link VineService} parameter maxTokens
      *
      * @return max tokens limit
      */
     int maxTokens() default -1;
+
+    /**
+     * The number of continuations.
+     * when the output length exceeds maxTokens, the model will continue to be called to generate until the output length
+     * is less than or equal to maxTokens or the number of continuations reaches maxContinuation.
+     * Default is -1, which means using the annotation {@link VineService} parameter maxContinuation
+     *
+     * @return max continuation
+     */
+    int maxContinuation() default -1;
 
     /**
      * The action parameters and return value serialization type

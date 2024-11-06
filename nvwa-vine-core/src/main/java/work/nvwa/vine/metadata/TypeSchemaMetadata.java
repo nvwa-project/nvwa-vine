@@ -1,9 +1,12 @@
 package work.nvwa.vine.metadata;
 
+import work.nvwa.vine.prompt.VinePrompter;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Geng Rong
@@ -33,11 +36,21 @@ public class TypeSchemaMetadata {
         this.subFields = subFields;
     }
 
-    public void fillingInfo(String basicInfo, String subFieldsInfo, String fullSchemaInfo, List<FieldSchemaMetadata> subFields) {
+    public void fillingInfo(VinePrompter vinePrompter, String basicInfo, List<FieldSchemaMetadata> subFields) {
         this.basicInfo = basicInfo;
-        this.subFieldsInfo = subFieldsInfo;
-        this.fullSchemaInfo = fullSchemaInfo;
         this.subFields = subFields;
+        generateSchemaInfo(vinePrompter);
+    }
+
+    public void generateSchemaInfo(VinePrompter vinePrompter) {
+        StringBuilder subFieldsInfo = new StringBuilder();
+        StringBuilder fullSchemaInfo = new StringBuilder(vinePrompter.header(3, basicInfo));
+        if (!subFields.isEmpty()) {
+            subFieldsInfo.append(subFields.stream().map(FieldSchemaMetadata::getSchema).collect(Collectors.joining(vinePrompter.newLine())));
+            fullSchemaInfo.append(vinePrompter.newLine()).append(subFieldsInfo);
+        }
+        this.subFieldsInfo = subFieldsInfo.toString();
+        this.fullSchemaInfo = fullSchemaInfo.toString();
     }
 
     public String getName() {

@@ -51,6 +51,7 @@ public class InvocationContext {
         int maxContinuation = -1;
         boolean enableThought;
         Class<? extends VineFunctionExample>[] examples = null;
+        String[] generateFields = null;
         if (vineFunction != null) {
             clientLevel = vineFunction.clientLevel();
             enableThought = vineFunction.enableThought();
@@ -70,21 +71,22 @@ public class InvocationContext {
             maxTokens = vineFunction.maxTokens();
             maxContinuation = vineFunction.maxContinuation();
             maxRetryAttempts = vineFunction.maxRetryAttempts();
+            generateFields = vineFunction.generateFields();
         } else {
             serializationType = vineService.serializationType();
             mission = method.getName();
             enableThought = false;
         }
-        if(maxTokens <= 0) {
+        if (maxTokens <= 0) {
             maxTokens = vineService.maxTokens();
         }
-        if(maxContinuation <= 0) {
+        if (maxContinuation <= 0) {
             maxContinuation = vineService.maxContinuation();
         }
         if (serializationType == SerializationType.Default) {
             serializationType = vineConfig.defaultSerializationType();
         }
-        if(maxRetryAttempts == -1) {
+        if (maxRetryAttempts == -1) {
             maxRetryAttempts = vineService.maxRetryAttempts();
         }
         TypeReference<?> returnTypeRef = new TypeReference<>() {
@@ -93,7 +95,8 @@ public class InvocationContext {
                 return method.getGenericReturnType();
             }
         };
-        schemaPrompt = schemaContext.buildSchemaPrompt(method, serializationType, examples);
-        return new VineFunctionMetadata(userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType, returnTypeRef, maxRetryAttempts, maxTokens, maxContinuation);
+        schemaPrompt = schemaContext.buildSchemaPrompt(method, serializationType, examples, generateFields);
+        return new VineFunctionMetadata(userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType,
+                returnTypeRef, maxRetryAttempts, maxTokens, maxContinuation);
     }
 }

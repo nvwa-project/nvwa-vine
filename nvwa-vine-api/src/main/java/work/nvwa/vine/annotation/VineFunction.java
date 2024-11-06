@@ -98,4 +98,12 @@ public @interface VineFunction {
      * @return action examples
      */
     Class<? extends VineFunctionExample>[] examples() default {};
+
+    /**
+     * The fields to generate in the return type, default is empty, which means generate all fields
+     * The priority of this configuration is higher than @VineField.generate, that is, even if @VineField.generate is false, but configured here, it will override
+     *
+     * @return fields need to generate
+     */
+    String[] generateFields() default {};
 }

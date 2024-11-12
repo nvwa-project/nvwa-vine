@@ -11,6 +11,7 @@ import static work.nvwa.vine.VineConstants.BASIC_CHAT_CLIENT_LEVEL;
  * @author Geng Rong
  */
 public record VineFunctionMetadata(
+        String methodName,
         String userPrompt,
         String systemPrompt,
         String schemaPrompt,
@@ -23,9 +24,10 @@ public record VineFunctionMetadata(
         Integer maxTokens,
         Integer maxContinuation
 ) {
-    public VineFunctionMetadata(String userPrompt, String systemPrompt, String schemaPrompt, String missionObjective, String clientLevel,
+    public VineFunctionMetadata(String methodName, String userPrompt, String systemPrompt, String schemaPrompt, String missionObjective, String clientLevel,
                                 Boolean enableThought, SerializationType serializationType, TypeReference<?> returnTypeRef,
                                 Integer maxRetryAttempts, Integer maxTokens, Integer maxContinuation) {
+        this.methodName = methodName;
         this.userPrompt = userPrompt;
         this.systemPrompt = systemPrompt;
         this.schemaPrompt = schemaPrompt;

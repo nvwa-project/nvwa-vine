@@ -8,8 +8,9 @@ import java.util.List;
  * @author Geng Rong
  */
 public class DefaultVineChatLogger implements VineChatLogger {
+
     @Override
-    public String start(List<ChatMessage> messages) {
+    public String start(String methodName, String mission, List<ChatMessage> messages) {
         return "";
     }
 

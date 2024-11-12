@@ -86,7 +86,7 @@ public class SingletonVineChatClient implements VineChatClient {
         if (vineChatLogger == null) {
             return retryCall(messages, vineFunctionMetadata);
         }
-        String logRecordId = vineChatLogger.start(messages);
+        String logRecordId = vineChatLogger.start(vineFunctionMetadata.methodName(), vineFunctionMetadata.missionObjective(), messages);
         try {
             String assistantMessageText = retryCall(messages, vineFunctionMetadata);
             vineChatLogger.success(logRecordId, assistantMessageText);

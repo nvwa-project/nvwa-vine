@@ -95,8 +95,9 @@ public class InvocationContext {
                 return method.getGenericReturnType();
             }
         };
+        String methodName = method.getDeclaringClass().getCanonicalName() + ":" + method.getName();
         schemaPrompt = schemaContext.buildSchemaPrompt(method, serializationType, examples, generateFields);
-        return new VineFunctionMetadata(userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType,
+        return new VineFunctionMetadata(methodName, userPrompt, systemPrompt, schemaPrompt, mission, clientLevel, enableThought, serializationType,
                 returnTypeRef, maxRetryAttempts, maxTokens, maxContinuation);
     }
 }

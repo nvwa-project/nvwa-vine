@@ -364,13 +364,13 @@ public class SchemaContext {
         if (clazz == null || clazz == Object.class) {
             return;
         }
-        if (generateFields == null) {
+        if (generateFields == null || generateFields.length == 0) {
             fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         } else {
             Set<String> generateFieldSet = new HashSet<>(Arrays.asList(generateFields));
-            Arrays.stream(clazz.getDeclaredFields()).filter(field -> !generateFieldSet.contains(field.getName())).forEach(fields::add);
+            Arrays.stream(clazz.getDeclaredFields()).filter(field -> generateFieldSet.contains(field.getName())).forEach(fields::add);
         }
-        getAllFields(clazz.getSuperclass(), fields, null);
+        getAllFields(clazz.getSuperclass(), fields, generateFields);
     }
 
     private boolean filterFiled(Field field) {

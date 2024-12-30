@@ -8,7 +8,7 @@ Makes accessing AI simpler and more efficient
 
 </div>
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/work.nvwa/nvwa-vine-bom/badge.png)](https://search.maven.org/artifact/work.nvwa/nvwa-vine-bom/)
+[![Maven Central Version](https://img.shields.io/maven-central/v/work.nvwa/nvwa-vine-bom)](https://central.sonatype.com/artifact/work.nvwa/nvwa-vine-bom/)
 
 - ⚡️ Simple and easy to use, efficient
 - ⚙️️ Code-driven, easy to manage

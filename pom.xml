@@ -12,11 +12,17 @@
     <url>https://github.com/nvwa-project/nvwa-vine</url>
 
     <name>Nvwa Vine</name>
+
     <description>Vine makes accessing AI simpler and more efficient</description>
 
     <modules>
         <module>nvwa-vine-core</module>
         <module>nvwa-vine-spring-boot-autoconfigure</module>
+        <module>nvwa-vine-bom</module>
+        <module>nvwa-vine-test</module>
+        <module>nvwa-vine-examples</module>
+        <module>nvwa-vine-api</module>
+
         <module>spring-boot-starters/vine-starter-spring-ai</module>
         <module>spring-boot-starters/vine-starter-deepseek</module>
         <module>spring-boot-starters/vine-starter-openai</module>
@@ -24,10 +30,6 @@
         <module>spring-boot-starters/vine-starter-minimax</module>
         <module>spring-boot-starters/vine-starter-qianfan</module>
         <module>spring-boot-starters/vine-starter-zhipuai</module>
-        <module>nvwa-vine-bom</module>
-        <module>nvwa-vine-test</module>
-        <module>nvwa-vine-examples</module>
-        <module>nvwa-vine-api</module>
     </modules>
 
     <repositories>
@@ -218,10 +220,11 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.6.0</version>
+                <version>0.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
                 </configuration>
             </plugin>
         </plugins>
